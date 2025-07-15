@@ -1,0 +1,25 @@
+﻿<Page
+    x:Class="MatrixUWP.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MatrixUWP"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Frame x:Name="NavigacniRamec" Navigated="NavigacniRamec_Navigated"></Frame>
+
+    <Page.TopAppBar>
+        <CommandBar x:FieldModifier="public" x:Name="CommandBarMainPage">
+
+            <AppBarButton x:Name="tlacitkoChaty" HorizontalAlignment="Left" Icon="Message" Label="Chaty" VerticalAlignment="Top" Click="TlacitkoChaty_Click" />
+            <AppBarButton x:Name="tlacitkoUcet" HorizontalAlignment="Left" Icon="Setting" Label="Nastavení" VerticalAlignment="Top" Click="TlacitkoUcet_Click"/>
+
+            <CommandBar.Content>
+                <TextBlock x:Name="NadpisStrankyTextBlock" Margin="12,8" x:FieldModifier="public" />
+            </CommandBar.Content>
+        </CommandBar>
+    </Page.TopAppBar>
+    
+</Page>
