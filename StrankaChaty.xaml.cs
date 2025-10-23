@@ -45,7 +45,8 @@ namespace MatrixUWP
             try
             {
                 string UrlKziskani = "https://" + ApplicationData.Current.LocalSettings.Values["MatrixServer"]?.ToString() + "/_matrix/client/r0/sync";
-                MatrixSyncOdpoved matrixSyncOdpoved = JsonConvert.DeserializeObject<MatrixSyncOdpoved>(await NacistStrankuRestApi(UrlKziskani));
+                var aaa = await NacistStrankuRestApi(UrlKziskani);
+                MatrixSyncOdpoved matrixSyncOdpoved = JsonConvert.DeserializeObject<MatrixSyncOdpoved>(aaa);
                 MatrixSeznamChatu.Clear();
 
                 foreach (var jedenChatMatrix in matrixSyncOdpoved.Rooms.Join)
@@ -53,7 +54,7 @@ namespace MatrixUWP
                     MatrixSeznamChatu.Add(new MatrixSeznamChatu_JedenChat
                     {
                         IdChatu = jedenChatMatrix.Key,
-                        NazevChatu = jedenChatMatrix.Value.Timeline?.Events?.Where(e => e.Type == "m.room.name" && e.Content?.Name != null)?.LastOrDefault()?.Content?.Name ?? jedenChatMatrix.Key,
+                        NazevChatu = jedenChatMatrix.Value.Timeline?.Events?.Where(e => e.Type == "m.room.name" && e.Content?.Name != null)?.LastOrDefault()?.Content?.Name ?? jedenChatMatrix.Value.State?.Events?.Where(e => e.Type == "m.room.member")?.LastOrDefault()?.Content.ToString() ?? jedenChatMatrix.Key,
                         PosledniZprava = jedenChatMatrix.Value.Timeline?.Events?.Where(e => e.Type == "m.room.message" && e.Content?.Body != null)?.LastOrDefault()?.Content?.Body ?? "Obsah nebyl nalezen"
                     });
                 }
