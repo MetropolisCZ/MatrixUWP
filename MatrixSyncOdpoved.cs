@@ -55,7 +55,7 @@ namespace MatrixUWP
         public string EventId { get; set; }
 
         [JsonProperty("content")]
-        public JObject Content { get; set; }
+        public Dictionary<string, object> Content { get; set; }
 
         [JsonProperty("origin_server_ts")]
         public long OriginServerTs { get; set; }
@@ -118,5 +118,6 @@ namespace MatrixUWP
         public string IdChatu { get; set; }
         public string NazevChatu { get; set; }
         public string PosledniZprava { get; set; }
+        public DateTime DateTimePosledniZpravy { get; set; }
     }
 }

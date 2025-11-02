@@ -27,6 +27,8 @@ namespace MatrixUWP
     public sealed partial class StrankaChaty : Page
     {
         private string pristupovyToken = ApplicationData.Current.LocalSettings.Values["pristupovyToken"]?.ToString();
+        private string uzivatelskeJmeno = ApplicationData.Current.LocalSettings.Values["uzivatelskeJmeno"]?.ToString();
+
         private List<MatrixSeznamChatu_JedenChat> MatrixSeznamChatu = new List<MatrixSeznamChatu_JedenChat>();
 
         public StrankaChaty()
@@ -51,13 +53,21 @@ namespace MatrixUWP
 
                 foreach (var jedenChatMatrix in matrixSyncOdpoved.Rooms.Join)
                 {
+                    string nazevChatu =
+                        jedenChatMatrix.Value.Timeline?.Events?.Where(e => e.Type == "m.room.name" && e.Content?.Name != null)?.LastOrDefault()?.Content?.Name
+                        ?? jedenChatMatrix.Value.State?.Events?.Where(e => e.Type == "m.room.member" && e.Content != null && e.Content.TryGetValue("displayname", out object value) && value?.ToString() != uzivatelskeJmeno)?.LastOrDefault()?.Content["displayname"].ToString()
+                        ?? "ID " + jedenChatMatrix.Key;
+
                     MatrixSeznamChatu.Add(new MatrixSeznamChatu_JedenChat
                     {
                         IdChatu = jedenChatMatrix.Key,
-                        NazevChatu = jedenChatMatrix.Value.Timeline?.Events?.Where(e => e.Type == "m.room.name" && e.Content?.Name != null)?.LastOrDefault()?.Content?.Name ?? jedenChatMatrix.Value.State?.Events?.Where(e => e.Type == "m.room.member")?.LastOrDefault()?.Content.ToString() ?? jedenChatMatrix.Key,
-                        PosledniZprava = jedenChatMatrix.Value.Timeline?.Events?.Where(e => e.Type == "m.room.message" && e.Content?.Body != null)?.LastOrDefault()?.Content?.Body ?? "Obsah nebyl nalezen"
+                        NazevChatu = nazevChatu,
+                        PosledniZprava = jedenChatMatrix.Value.Timeline?.Events?.Where(e => e.Type == "m.room.message" && e.Content?.Body != null)?.LastOrDefault()?.Content?.Body ?? "Obsah nebyl nalezen",
+                        DateTimePosledniZpravy = // TODO
                     });
                 }
+
+                MatrixSeznamChatu.Sort() // TODO
 
                 ListViewChaty.ItemsSource = MatrixSeznamChatu;
             }
