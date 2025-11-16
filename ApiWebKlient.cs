@@ -55,11 +55,11 @@ namespace MatrixUWP
             { // Posílá data na server, narozdíl od PUT je možné POST volat vícekrát což může mít za následek například vícenásobné vytvoření téže položky
 
                 httpResponse = await httpClient.PostAsync(new Uri(UrlkZiskani), new HttpStringContent(teloHTTPrequestu, UnicodeEncoding.Utf8, "application/json"));
-                //httpResponse = await httpClient.SendRequestAsync(new HttpRequestMessage(HttpMethod.Patch, new Uri(UrlkZiskani)) { Content = new HttpStringContent(teloHTTPrequestu, Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/json") });
+
             }
             else if (typHTTPrequestu == TypyHTTPrequestu.Put)
             {
-                
+
             }
             else if (typHTTPrequestu == TypyHTTPrequestu.Delete)
             {
@@ -76,18 +76,6 @@ namespace MatrixUWP
             {
                 if (httpResponse.StatusCode == HttpStatusCode.Unauthorized && prvniPokus)
                 {
-                    /*if (await NacistPristupovyTokenNaPozadi())
-                    {
-                        prvniPokus = false;
-                        goto druhyPokus;
-                    }
-                    else
-                    {
-                        bool zobrazitPrihlaseniAutomaticky = true;
-                        NavigovatNaStranku(typeof(StrankaNastaveni), zobrazitPrihlaseniAutomaticky);
-
-                        throw new OperationCanceledException();
-                    }*/
 
                     bool zobrazitPrihlaseniAutomaticky = true;
                     NavigovatNaStranku(typeof(StrankaNastaveni), zobrazitPrihlaseniAutomaticky);
@@ -122,51 +110,84 @@ namespace MatrixUWP
         }
 
 
-        /*public static async Task<bool> NacistPristupovyTokenNaPozadi()
+
+
+
+
+        public static async Task<IBuffer> NacistBufferRestApi(string UrlkZiskani, TypyHTTPrequestu typHTTPrequestu = TypyHTTPrequestu.Get, string teloHTTPrequestu = null)
         {
-            string providerId = ApplicationData.Current.LocalSettings.Values["CurrentUserProviderId"]?.ToString();
-            string accountId = ApplicationData.Current.LocalSettings.Values["CurrentUserId"]?.ToString();
+            bool prvniPokus = true;
+        druhyPokus:
 
-            if (null == providerId || null == accountId)
+            HttpResponseMessage httpResponse = new HttpResponseMessage();
+
+            if (typHTTPrequestu == TypyHTTPrequestu.Get)
+            {
+                httpResponse = await httpClient.GetAsync(new Uri(UrlkZiskani));
+            }
+            else if (typHTTPrequestu == TypyHTTPrequestu.Patch)
+            { // Upraví vlastnosti, zachová soubor
+
+                httpResponse = await httpClient.SendRequestAsync(new HttpRequestMessage(HttpMethod.Patch, new Uri(UrlkZiskani)) { Content = new HttpStringContent(teloHTTPrequestu, UnicodeEncoding.Utf8, "application/json") });
+            }
+            else if (typHTTPrequestu == TypyHTTPrequestu.Post)
+            { // Posílá data na server, narozdíl od PUT je možné POST volat vícekrát což může mít za následek například vícenásobné vytvoření téže položky
+
+                httpResponse = await httpClient.PostAsync(new Uri(UrlkZiskani), new HttpStringContent(teloHTTPrequestu, UnicodeEncoding.Utf8, "application/json"));
+
+            }
+            else if (typHTTPrequestu == TypyHTTPrequestu.Put)
             {
 
-                return false;
+            }
+            else if (typHTTPrequestu == TypyHTTPrequestu.Delete)
+            {
+                httpResponse = await httpClient.DeleteAsync(new Uri(UrlkZiskani));
             }
 
-            WebAccountProvider provider = await WebAuthenticationCoreManager.FindAccountProviderAsync(providerId);
-            WebAccount account = await WebAuthenticationCoreManager.FindAccountAsync(provider, accountId);
-
-            WebTokenRequest request = new WebTokenRequest(provider, "Files.ReadWrite.All");
-
-            WebTokenRequestResult result = await WebAuthenticationCoreManager.GetTokenSilentlyAsync(request, account);
-            if (result.ResponseStatus == WebTokenRequestStatus.UserInteractionRequired)
+            if (httpResponse.IsSuccessStatusCode || (typHTTPrequestu == TypyHTTPrequestu.Delete && httpResponse.StatusCode == HttpStatusCode.NoContent))
             {
-                // Unable to get a token silently - you'll need to show the UI
-                return false;
-            }
-            else if (result.ResponseStatus == WebTokenRequestStatus.Success)
-            {
-                // Success
-                string pristupovyToken = result.ResponseData[0].Token;
-                //App.OsobniPristupovyToken = pristupovyToken;
 
-                backgroundDownloader = new BackgroundDownloader();
-                backgroundDownloader.SetRequestHeader("Authorization", "Bearer " + pristupovyToken);
+                return await httpResponse.Content.ReadAsBufferAsync();
 
-                //backgroundUploader = new BackgroundUploader() { Method = "PUT" };
-                //backgroundUploader.SetRequestHeader("Authorization", "Bearer " + pristupovyToken);
-
-                HttpRequestHeaderCollection headers = httpClient.DefaultRequestHeaders;
-                headers.Authorization = new HttpCredentialsHeaderValue("Bearer", pristupovyToken);
-
-                return true;
             }
             else
             {
-                // Other error
-                return false;
+                if (httpResponse.StatusCode == HttpStatusCode.Unauthorized && prvniPokus)
+                {
+
+                    bool zobrazitPrihlaseniAutomaticky = true;
+                    NavigovatNaStranku(typeof(StrankaNastaveni), zobrazitPrihlaseniAutomaticky);
+
+                    throw new OperationCanceledException();
+                }
+                else
+                {
+                    ContentDialog dialogHTTPchyba = new ContentDialog()
+                    {
+                        Title = "HTTP odpověď " + httpResponse.StatusCode,
+                        Content = await httpResponse.Content.ReadAsStringAsync() + "\n\n" + UrlkZiskani,
+                        CloseButtonText = "Zavřit"
+                    };
+
+                    _ = await dialogHTTPchyba.ShowAsync();
+                    if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        bool zobrazitPrihlaseniAutomaticky = true;
+                        NavigovatNaStranku(typeof(StrankaNastaveni), zobrazitPrihlaseniAutomaticky);
+                    }
+                    else
+                    {
+                        MainPage.NavigovatNaStranku(typeof(StrankaNastaveni));
+                    }
+
+                    throw new System.Net.Http.HttpRequestException();
+                }
+
             }
-        }*/
+
+        }
+
 
 
 
@@ -247,27 +268,6 @@ namespace MatrixUWP
     }
 
 
-
-
-
-    // ✅ Singleton manager that holds all uploads
-    /*public class UploadManager
-    {
-        private static UploadManager _instance;
-
-        public static UploadManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new UploadManager();
-                return _instance;
-            }
-        }
-
-        public ObservableCollection<DownloadItem> Uploads { get; } = new ObservableCollection<DownloadItem>();
-        private UploadManager() { }
-    }*/
 
 
 }

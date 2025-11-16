@@ -13,10 +13,17 @@
             <ListView x:Name="ListViewChaty" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" SelectionMode="None" IsItemClickEnabled="True" IsSwipeEnabled="False" ItemClick="ListViewChaty_ItemClick">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Padding="0,10">
-                            <TextBlock Text="{Binding NazevChatu}" FontWeight="SemiBold" />
-                            <TextBlock Text="{Binding PosledniZprava}" TextWrapping="Wrap" Foreground="Gray" />
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="60"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Source="{Binding ObrazekChatu}" Margin="0,8,8,8"></Image>
+                            <StackPanel Padding="0,10" Grid.Column="1">
+                                <TextBlock Text="{Binding NazevChatu}" FontWeight="SemiBold" />
+                                <TextBlock Text="{Binding PosledniZprava}" TextWrapping="Wrap" Foreground="Gray" />
+                            </StackPanel>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

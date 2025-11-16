@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage.Streams;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace MatrixUWP
 {
@@ -119,5 +121,7 @@ namespace MatrixUWP
         public string NazevChatu { get; set; }
         public string PosledniZprava { get; set; }
         public DateTime DateTimePosledniZpravy { get; set; }
+        public long UnixoveSekundyPosledniZpravy { get; set; }
+        public BitmapImage ObrazekChatu { get; set; }
     }
 }
