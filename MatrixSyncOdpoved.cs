@@ -84,7 +84,7 @@ namespace MatrixUWP
         public string Sender { get; set; }
 
         [JsonProperty("content")]
-        public MessageContent Content { get; set; }
+        public Dictionary<string, object> Content { get; set; } //MessageContent Content { get; set; }
 
         [JsonProperty("event_id")]
         public string EventId { get; set; }
@@ -93,7 +93,7 @@ namespace MatrixUWP
         public long OriginServerTs { get; set; }
     }
 
-    public class MessageContent
+    /*public class MessageContent
     {
         [JsonProperty("body")]
         public string Body { get; set; }
@@ -103,7 +103,7 @@ namespace MatrixUWP
 
         [JsonProperty("name")]
         public string Name { get; set; }
-    }
+    }*/
 
 
 
@@ -123,5 +123,7 @@ namespace MatrixUWP
         public DateTime DateTimePosledniZpravy { get; set; }
         public long UnixoveSekundyPosledniZpravy { get; set; }
         public BitmapImage ObrazekChatu { get; set; }
+
+        public Timeline Timeline { get; set; }
     }
 }
