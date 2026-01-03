@@ -222,7 +222,7 @@ namespace MatrixUWP
 
                     //string zobrazovaneJmenoOdesilatelePosledniZpravy = clenoveChatu?.FirstOrDefault(e => e.MatrixIdUzivatele == posledniZprava?.Sender)?.ZobrazovaneJmeno ?? posledniZprava?.Sender ?? "Prázdná konverzace";
 
-                    string posledniZpravaText = /*zobrazovaneJmenoOdesilatelePosledniZpravy + " | " +*/ ZiskatHodnotuDictionary(posledniZprava?.Content, "body");
+                    string posledniZpravaText = /*zobrazovaneJmenoOdesilatelePosledniZpravy + " | " +*/ ZiskatHodnotuDictionary(posledniZprava?.Content, "body")?.Replace("\r", " ")?.Replace("\n", " ");
 
                     /*string posledniZprava = jedenChatMatrix.Value.Timeline?.Events?
                                 .Where(e => e.Type == "m.room.message")
@@ -230,13 +230,29 @@ namespace MatrixUWP
                                 .LastOrDefault(v => v != null)
                             ?? jedenChatMatrix.Value.Timeline?.Events?.LastOrDefault()?.Type;*/
 
+                    string zobrazovanyCasPosledniZpravy = "";
+                    DateTime dateTimePosledniZpravy = DateTimeOffset.FromUnixTimeMilliseconds(unixoveSekundyPosledniZpravy).LocalDateTime;
+
+                    if (dateTimePosledniZpravy.Day == DateTime.Now.Day && dateTimePosledniZpravy.Month == DateTime.Now.Month && dateTimePosledniZpravy.Year == DateTime.Now.Year) // Je to dneska, dát jenom čas
+                    {
+                        zobrazovanyCasPosledniZpravy = dateTimePosledniZpravy.ToString("HH:mm");
+                    }
+                    else if (dateTimePosledniZpravy.Day == DateTime.Now.AddDays(-1).Day && dateTimePosledniZpravy.Month == DateTime.Now.AddDays(-1).Month && dateTimePosledniZpravy.Year == DateTime.Now.AddDays(-1).Year)
+                    {
+                        zobrazovanyCasPosledniZpravy = "včera";
+                    }
+                    else
+                    {
+                        zobrazovanyCasPosledniZpravy = dateTimePosledniZpravy.ToString("d. M. yyyy");
+                    }
+
                     MatrixSeznamChatu.Add(new MatrixSeznamChatu_JedenChat
                     {
                         IdChatu = jedenChatMatrix.Key,
                         NazevChatu = nazevChatu,
                         PosledniZprava = posledniZpravaText,
                         UnixoveSekundyPosledniZpravy = unixoveSekundyPosledniZpravy,
-                        ZobrazovanyCasPosledniZpravy = DateTimeOffset.FromUnixTimeMilliseconds(unixoveSekundyPosledniZpravy).LocalDateTime.ToString(),
+                        ZobrazovanyCasPosledniZpravy = zobrazovanyCasPosledniZpravy,
                         ObrazekChatu = await NacistMatrixObrazek(urlObrazkuChatu),
                         //Timeline = jedenChatMatrix.Value.Timeline,
                         ClenoveChatu = clenoveChatu // Bez aktuálního uživatele
