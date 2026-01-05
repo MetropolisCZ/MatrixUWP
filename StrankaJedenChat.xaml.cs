@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using static MatrixUWP.ApiWebKlient;
@@ -16,10 +20,11 @@ namespace MatrixUWP
     {
 
         private MatrixSeznamChatu_JedenChat chatKterySeMaZobrazit = new MatrixSeznamChatu_JedenChat();
+        private ZpravyAktualniKonverzace zpravyAktualniKonverzace = new ZpravyAktualniKonverzace();
 
         public StrankaJedenChat()
         {
-            try { this.InitializeComponent(); } catch (Exception ex) { var dialog = new MessageDialog(ex.ToString()); _ = dialog.ShowAsync(); }
+            InitializeComponent();
         }
 
         private async Task PrvotniNacteniChatu()
@@ -29,8 +34,20 @@ namespace MatrixUWP
                 ObrazekKonverzace.ImageSource = chatKterySeMaZobrazit.ObrazekChatu;
                 NazevKonverzace.Text = chatKterySeMaZobrazit.NazevChatu;
 
+                StackPanelNacitani_Stav.Text = "Stahování synchronizačního souboru ze serveru";
                 string UrlNacistZpravyChatu = "https://" + StrankaChaty.matrixServer + "/_matrix/client/v3/rooms/" + chatKterySeMaZobrazit.IdChatu + "/messages?dir=b&limit=50";
                 var aaa = await NacistStrankuRestApi(UrlNacistZpravyChatu);
+
+                StackPanelNacitani_Stav.Text = "Zpracovávání celkového synchronizačního souboru";
+                zpravyAktualniKonverzace = JsonConvert.DeserializeObject<ZpravyAktualniKonverzace>(aaa);
+                // Na indexu 0 je nejnovější zpráva (řazení od nejnovějších)
+
+                StackPanelNacitani.Visibility = Visibility.Collapsed;
+                ListViewZpravyChaty.Visibility = Visibility.Visible;
+                ListViewZpravyChaty.ItemsSource = zpravyAktualniKonverzace.Zpravy.Reverse();
+
+                //ListViewZpravyChaty.ScrollIntoView(zpravyAktualniKonverzace.Zpravy.LastOrDefault());
+
             }
             catch
             {

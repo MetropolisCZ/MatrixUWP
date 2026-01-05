@@ -105,7 +105,7 @@ namespace MatrixUWP
                 headers.Authorization = new Windows.Web.Http.Headers.HttpCredentialsHeaderValue("Bearer", pristupovyToken);
                 ApplicationData.Current.LocalSettings.Values["pristupovyToken"] = pristupovyToken;
                 ApplicationData.Current.LocalSettings.Values["MatrixServer"] = contentDialogPrihlaseni_textBox_server.Text;
-                ApplicationData.Current.LocalSettings.Values["uzivatelskeJmeno"] = contentDialogPrihlaseni_textBox_uzivatelskeJmeno.Text;
+                ApplicationData.Current.LocalSettings.Values["uzivatelskeJmeno"] = contentDialogPrihlaseni_textBox_uzivatelskeJmeno.Text.ToLower();
                 MainPage.NavigovatNaStranku(typeof(StrankaChaty));
 
 

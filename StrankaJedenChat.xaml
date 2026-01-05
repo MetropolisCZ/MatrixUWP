@@ -8,6 +8,10 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <local:KonvertorJedenChatTextZpravy x:Key="KonvertorJedenChatTextZpravy"/>
+    </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>
@@ -32,15 +36,25 @@
             </Button>
         </Grid>
 
-        <ListView x:Name="ListViewZpravyChaty" Grid.Row="1" HorizontalAlignment="Stretch" SelectionMode="None" IsItemClickEnabled="False" IsSwipeEnabled="False">
+        <StackPanel x:Name="StackPanelNacitani" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1">
+            <ProgressRing IsActive="True"></ProgressRing>
+            <TextBlock x:Name="StackPanelNacitani_Stav"></TextBlock>
+        </StackPanel>
+
+        <ListView x:Name="ListViewZpravyChaty" Grid.Row="1" HorizontalAlignment="Stretch" SelectionMode="None" IsItemClickEnabled="False" IsSwipeEnabled="False" Visibility="Collapsed">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView" VerticalAlignment="Bottom"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Height="Auto" Margin="4"> <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
-                        <Border CornerRadius="8">
-                            <StackPanel MinHeight="75" Width="350" Padding="10, 0, 0, 10">
+                    <Grid Height="Auto" Margin="4" Background="#22cccccc" CornerRadius="3"> <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
+                        <Border>
+                            <StackPanel Width="Auto" Padding="10,2">
                                 <!--Background="{x:Bind BgColor}"-->
-                                <TextBlock Padding="0, 10, 0, 0" Text="" FontSize="20" Foreground="{ThemeResource SystemControlForegroundAltHighBrush}"/>
-                                <TextBlock Padding="0, 0, 0, 10" Text="" FontSize="15" Foreground="{ThemeResource SystemControlForegroundAltMediumHighBrush}"/>
+                                <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" />
+                                <TextBlock Text="{Binding Type}" />
                             </StackPanel>
                         </Border>
                     </Grid>

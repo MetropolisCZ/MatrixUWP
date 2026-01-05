@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -131,5 +132,17 @@ namespace MatrixUWP
         public Timeline Timeline { get; set; }
         public List<ClenChatu> ClenoveChatu { get; set; }
         public string ZobrazovanyCasPosledniZpravy { get; set; }
+    }
+
+    public class ZpravyAktualniKonverzace
+    {
+        [JsonProperty("chunk")]
+        public ObservableCollection<Event> Zpravy { get; set; }
+
+        [JsonProperty("start")]
+        public string Start { get; set; }
+
+        [JsonProperty("end")]
+        public string End { get; set; }
     }
 }

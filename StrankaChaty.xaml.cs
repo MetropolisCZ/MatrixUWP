@@ -35,17 +35,6 @@ namespace MatrixUWP
 
         private List<MatrixSeznamChatu_JedenChat> MatrixSeznamChatu = new List<MatrixSeznamChatu_JedenChat>();
 
-        public static string ZiskatHodnotuDictionary(IDictionary<string, object> dictionary, string key)
-        {
-            if (dictionary == null)
-                return null;
-
-            return dictionary.TryGetValue(key, out object obj)
-                ? obj?.ToString()
-                : null;
-
-        }
-
         public StrankaChaty()
         {
             InitializeComponent();
@@ -133,12 +122,20 @@ namespace MatrixUWP
                         {
                             nazevChatu = "Prázdný chat";
                         }
-                        else if (clenoveChatu.Count > 1) // 2 a víc členů – nejdřív odstraníme Bridge bota
-                        {
-                            clenoveChatu.RemoveAll(x =>
-                x.ZobrazovaneJmeno.IndexOf("bridge bot", StringComparison.OrdinalIgnoreCase) >= 0);
+                        else
+                        { // 2 nebo víc členů 
+                            clenoveChatu.RemoveAll(x => x.ZobrazovaneJmeno.IndexOf("bridge bot", StringComparison.OrdinalIgnoreCase) >= 0);
 
-                            nazevChatu = clenoveChatu.LastOrDefault().ZobrazovaneJmeno;
+                            if (clenoveChatu.Count == 1)
+                            {
+                                nazevChatu = clenoveChatu.LastOrDefault().ZobrazovaneJmeno;
+                            }
+                            else
+                            {
+                                nazevChatu = "Skupina (" + clenoveChatu[0].ZobrazovaneJmeno + ", " + clenoveChatu[1].ZobrazovaneJmeno + ", …)";
+                            }
+
+                            
                             if (urlObrazkuChatu == null)
                             {
                                 urlObrazkuChatu = clenoveChatu.LastOrDefault().ProfilovaFotka;

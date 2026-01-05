@@ -214,6 +214,19 @@ namespace MatrixUWP
 
 
 
+        public static string ZiskatHodnotuDictionary(IDictionary<string, object> dictionary, string key)
+        {
+            if (dictionary == null)
+                return null;
+
+            return dictionary.TryGetValue(key, out object obj)
+                ? obj?.ToString()
+                : null;
+
+        }
+
+
+
 
     }
 
