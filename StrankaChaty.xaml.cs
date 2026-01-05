@@ -77,6 +77,7 @@ namespace MatrixUWP
 
             var headers = httpClient.DefaultRequestHeaders;
             headers.Authorization = new Windows.Web.Http.Headers.HttpCredentialsHeaderValue("Bearer", pristupovyToken);
+
             NacistChaty();
         }
 
@@ -214,11 +215,13 @@ namespace MatrixUWP
 
                     ?? null;*/
 
-                    long unixoveSekundyPosledniZpravy = jedenChatMatrix.Value.Timeline?.Events?.Where(e => e.Type == "m.room.message").LastOrDefault()?.OriginServerTs ?? 0;
+                    
 
                     Event posledniZprava = jedenChatMatrix.Value.Timeline?.Events?
                                 .Where(e => e.Type == "m.room.message")
                                 .LastOrDefault(v => v != null);
+
+                    long unixoveSekundyPosledniZpravy = posledniZprava?.OriginServerTs ?? 0;
 
                     //string zobrazovaneJmenoOdesilatelePosledniZpravy = clenoveChatu?.FirstOrDefault(e => e.MatrixIdUzivatele == posledniZprava?.Sender)?.ZobrazovaneJmeno ?? posledniZprava?.Sender ?? "Prázdná konverzace";
 
@@ -280,13 +283,15 @@ namespace MatrixUWP
         {
             base.OnNavigatedTo(e);
 
-            MainPage.PageHeader.Text = "Chaty";
+            MainPage.PageHeader.Text = "Všechny konverzace";
 
         }
 
         private void ListViewChaty_ItemClick(object sender, ItemClickEventArgs e)
         {
             MatrixSeznamChatu_JedenChat kliknutyChat = (MatrixSeznamChatu_JedenChat)e.ClickedItem;
+
+            MainPage.NavigovatNaStranku(typeof(StrankaJedenChat), kliknutyChat.IdChatu);
         }
     }
 }
