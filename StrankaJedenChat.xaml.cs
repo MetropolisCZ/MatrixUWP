@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using static MatrixUWP.ApiWebKlient;
@@ -18,7 +19,7 @@ namespace MatrixUWP
 
         public StrankaJedenChat()
         {
-            this.InitializeComponent();
+            try { this.InitializeComponent(); } catch (Exception ex) { var dialog = new MessageDialog(ex.ToString()); _ = dialog.ShowAsync(); }
         }
 
         private async Task PrvotniNacteniChatu()

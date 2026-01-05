@@ -39,8 +39,8 @@
                         <Border CornerRadius="8">
                             <StackPanel MinHeight="75" Width="350" Padding="10, 0, 0, 10">
                                 <!--Background="{x:Bind BgColor}"-->
-                                <TextBlock Padding="0, 10, 0, 0" FontSize="20" Foreground="{ThemeResource SystemControlForegroundAltHighBrush}"/>
-                                <TextBlock Padding="0, 0, 0, 10" FontSize="15" Foreground="{ThemeResource SystemControlForegroundAltMediumHighBrush}"/>
+                                <TextBlock Padding="0, 10, 0, 0" Text="" FontSize="20" Foreground="{ThemeResource SystemControlForegroundAltHighBrush}"/>
+                                <TextBlock Padding="0, 0, 0, 10" Text="" FontSize="15" Foreground="{ThemeResource SystemControlForegroundAltMediumHighBrush}"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -54,7 +54,7 @@
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <TextBox BorderThickness="0" Padding="12" PlaceholderText="Sem zadejte text zprávy"></TextBox>
-            <Button Grid.Column="1" Background="{StaticResource SystemAccentColor}" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Width="48">
+            <Button Grid.Column="1" Background="{StaticResource SystemControlHighlightAccentBrush}" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Width="48">
                 <SymbolIcon Symbol="Send"></SymbolIcon>
             </Button>
         </Grid>
