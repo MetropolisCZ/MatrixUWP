@@ -9,8 +9,13 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" NavigationCacheMode="Enabled">
 
     <ScrollViewer>
-        <StackPanel>
-            <ListView x:Name="ListViewChaty" HorizontalAlignment="Stretch" SelectionMode="None" IsItemClickEnabled="True" IsSwipeEnabled="False" ItemClick="ListViewChaty_ItemClick">
+        <StackPanel VerticalAlignment="Center">
+            <StackPanel x:Name="StackPanelNacitani" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ProgressRing IsActive="True"></ProgressRing>
+                <TextBlock x:Name="StackPanelNacitani_Stav"></TextBlock>
+            </StackPanel>
+            
+            <ListView x:Name="ListViewChaty" HorizontalAlignment="Stretch" SelectionMode="None" IsItemClickEnabled="True" IsSwipeEnabled="False" ItemClick="ListViewChaty_ItemClick" Visibility="Collapsed">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

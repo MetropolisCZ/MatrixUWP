@@ -36,11 +36,13 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Height="Auto" Margin="4"> <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
-                        <StackPanel MinHeight="75" Width="350" Padding="10, 0, 0, 10" CornerRadius="8">
-                            <!--Background="{x:Bind BgColor}"-->
-                            <TextBlock Padding="0, 10, 0, 0" FontSize="20" Foreground="{ThemeResource SystemControlForegroundAltHighBrush}"/>
-                            <TextBlock Padding="0, 0, 0, 10" FontSize="15" Foreground="{ThemeResource SystemControlForegroundAltMediumHighBrush}"/>
-                        </StackPanel>
+                        <Border CornerRadius="8">
+                            <StackPanel MinHeight="75" Width="350" Padding="10, 0, 0, 10">
+                                <!--Background="{x:Bind BgColor}"-->
+                                <TextBlock Padding="0, 10, 0, 0" FontSize="20" Foreground="{ThemeResource SystemControlForegroundAltHighBrush}"/>
+                                <TextBlock Padding="0, 0, 0, 10" FontSize="15" Foreground="{ThemeResource SystemControlForegroundAltMediumHighBrush}"/>
+                            </StackPanel>
+                        </Border>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

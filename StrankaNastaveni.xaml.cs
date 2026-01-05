@@ -35,13 +35,15 @@ namespace MatrixUWP
             StackPanel contentDialogPrihlaseni_stackPanel = new StackPanel();
             TextBox contentDialogPrihlaseni_textBox_server = new TextBox()
             {
-                PlaceholderText = "Server"
+                PlaceholderText = "Server",
+                Margin = new Thickness(0, 0, 0, 10)
             };
             TextBox contentDialogPrihlaseni_textBox_uzivatelskeJmeno = new TextBox()
             {
-                PlaceholderText = "Uživatelské jméno"
+                PlaceholderText = "Uživatelské jméno",
+                Margin = new Thickness(0, 0, 0, 10)
             };
-            TextBox contentDialogPrihlaseni_textBox_heslo = new TextBox()
+            PasswordBox contentDialogPrihlaseni_textBox_heslo = new PasswordBox()
             {
                 PlaceholderText = "Heslo"
             };
@@ -55,7 +57,8 @@ namespace MatrixUWP
                 Title = "Přihlášení",
                 PrimaryButtonText = "Přihlásit se",
                 CloseButtonText = "Zrušit",
-                Content = contentDialogPrihlaseni_stackPanel
+                Content = contentDialogPrihlaseni_stackPanel,
+                DefaultButton = ContentDialogButton.Primary
             };
 
             contentDialogPrihlaseni_textBox_server.Focus(FocusState.Programmatic);
@@ -67,7 +70,7 @@ namespace MatrixUWP
             //WebTokenRequestResult result = await WebAuthenticationCoreManager.RequestTokenAsync(request);
 
 
-            if (contentDialogResult == ContentDialogResult.Primary && contentDialogPrihlaseni_textBox_server.Text.Length > 0 && contentDialogPrihlaseni_textBox_uzivatelskeJmeno.Text.Length > 0 && contentDialogPrihlaseni_textBox_heslo.Text.Length > 0)
+            if (contentDialogResult == ContentDialogResult.Primary && contentDialogPrihlaseni_textBox_server.Text.Length > 0 && contentDialogPrihlaseni_textBox_uzivatelskeJmeno.Text.Length > 0 && contentDialogPrihlaseni_textBox_heslo.Password.Length > 0)
             {
 
                 httpClient.DefaultRequestHeaders.Clear();
@@ -83,7 +86,7 @@ namespace MatrixUWP
                         type = "m.id.user",
                         user = contentDialogPrihlaseni_textBox_uzivatelskeJmeno.Text
                     },
-                    password = contentDialogPrihlaseni_textBox_heslo.Text
+                    password = contentDialogPrihlaseni_textBox_heslo.Password
                 };
 
 

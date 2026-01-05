@@ -62,10 +62,15 @@ namespace MatrixUWP
         {
             try
             {
+                StackPanelNacitani_Stav.Text = "Stahování synchronizačního souboru ze serveru";
                 string UrlSyncFiltrovana = "https://" + matrixServer + "/_matrix/client/r0/sync"; // ?filter={\"room\":{\"timeline\":{\"limit\":2},\"state\":{\"lazy_load_members\":true}}}
                 var aaa = await NacistStrankuRestApi(UrlSyncFiltrovana);
+
+                StackPanelNacitani_Stav.Text = "Zpracovávání celkového synchronizačního souboru";
                 MatrixSyncOdpoved matrixSyncOdpoved = JsonConvert.DeserializeObject<MatrixSyncOdpoved>(aaa);
                 MatrixSeznamChatu.Clear();
+
+                StackPanelNacitani_Stav.Text = "Zpracovávání jednotlivých konverzací";
 
                 foreach (var jedenChatMatrix in matrixSyncOdpoved.Rooms.Join)
                 {
@@ -73,35 +78,6 @@ namespace MatrixUWP
 
                     string urlObrazkuChatu = (string)(jedenChatMatrix.Value.State?.Events?.Where(e => e.Type == "m.room.avatar" && e.Content != null)?.LastOrDefault()?.Content?["url"]) ?? null;
 
-
-                    /*string nazevChatu =
-						jedenChatMatrix.Value.Timeline?.Events?.Where(e => e.Type == "m.room.name" && e.Content?["name"] != null)?.LastOrDefault()?.Content?["name"].ToString()
-						?? mBridgeChannelContent?["displayname"]?.ToString()
-						?? jedenChatMatrix.Value.State?.Events?.Where(e => e.Type == "m.room.member" && e.Content != null && e.Content.TryGetValue("displayname", out object value) && value?.ToString() != uzivatelskeJmeno && value?.ToString().Contains("bridge bot") == false)?.LastOrDefault()?.Content["displayname"].ToString()
-						?? null;*/ //"ID " + jedenChatMatrix.Key;
-
-                    //string nazevChatu =
-                    //	// 1) Room name event
-                    //	jedenChatMatrix.Value.Timeline?.Events?
-                    //	.Where(
-                    //		e => e.Type == "m.room.name"
-                    //		&& e.Content != null)
-                    //	.LastOrDefault()?.Content["name"].ToString()
-
-                    //	// 2) Bridge displayname
-                    //	?? mBridgeChannelContent?["displayname"]?.ToString()
-
-                    //	// 3) Member displayname (not the user, not a bot)
-                    //	?? jedenChatMatrix.Value.State?.Events?
-                    //	.Where(
-                    //		e => e.Type == "m.room.member"
-                    //		&& e.Content != null && e.Content.TryGetValue("displayname", out var dnObj)
-                    //		&& dnObj?.ToString() != uzivatelskeJmeno
-                    //		&& dnObj?.ToString()?.Contains("bridge bot") == false)
-                    //	.LastOrDefault()?.Content["displayname"].ToString()
-
-                    //	// 4) Fallback
-                    //	?? null;
 
                     List<ClenChatu> clenoveChatu = new List<ClenChatu>();
 
@@ -170,27 +146,6 @@ namespace MatrixUWP
                         }
                     }
 
-                    /*
-
-                    ?? jedenChatMatrix.Value.State?.Events?
-                        .Where(e =>
-                            e.Type == "m.room.member"
-                            && ZiskatHodnotuDictionary(e.Content, "displayname") != null
-                            && ZiskatHodnotuDictionary(e.Content, "displayname") != uzivatelskeJmeno
-                            && ZiskatHodnotuDictionary(e.Content, "displayname")?.Contains("bridge bot") == false)
-                        .Select(e => ZiskatHodnotuDictionary(e.Content, "displayname"))
-                        .LastOrDefault()
-
-                    ?? jedenChatMatrix.Value.Timeline?.Events?
-                        .Where(e =>
-                            e.Type == "m.room.member"
-                            && ZiskatHodnotuDictionary(e.Content, "displayname") != null
-                            && ZiskatHodnotuDictionary(e.Content, "displayname") != uzivatelskeJmeno
-                            && ZiskatHodnotuDictionary(e.Content, "displayname")?.Contains("bridge bot") == false)
-                        .Select(e => ZiskatHodnotuDictionary(e.Content, "displayname"))
-                        .LastOrDefault()
-
-                    ?? null;*/
 
                     
 
@@ -240,7 +195,12 @@ namespace MatrixUWP
                     });
                 }
 
+                StackPanelNacitani_Stav.Text = "Řazení zpráv";
+
                 MatrixSeznamChatu.Sort((x, y) => y.UnixoveSekundyPosledniZpravy.CompareTo(x.UnixoveSekundyPosledniZpravy));
+
+                StackPanelNacitani.Visibility = Visibility.Collapsed;
+                ListViewChaty.Visibility = Visibility.Visible;
 
                 ListViewChaty.ItemsSource = MatrixSeznamChatu;
             }
