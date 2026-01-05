@@ -13,6 +13,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
 using static MatrixUWP.MainPage;
@@ -109,6 +110,29 @@ namespace MatrixUWP
 
         }
 
+
+
+        public static async Task<BitmapImage> NacistMatrixObrazek(string urlObrazku)
+        {
+            if (urlObrazku == null)
+            {
+                return null;
+            }
+
+            BitmapImage matrixObrazek = new BitmapImage();
+
+            IBuffer BufferObrazku = await NacistBufferRestApi("https://" + StrankaChaty.matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6));
+
+            InMemoryRandomAccessStream memoryStream = new InMemoryRandomAccessStream();
+            DataWriter writer = new DataWriter(memoryStream);
+            writer.WriteBuffer(BufferObrazku);
+            await writer.StoreAsync();
+            memoryStream.Seek(0);
+
+            await matrixObrazek.SetSourceAsync(memoryStream);
+
+            return matrixObrazek;
+        }
 
 
 

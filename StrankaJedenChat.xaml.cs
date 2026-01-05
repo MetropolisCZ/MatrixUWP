@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
+using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using static MatrixUWP.ApiWebKlient;
 
 // Dokumentaci k šabloně Prázdná aplikace najdete na adrese https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -22,17 +13,23 @@ namespace MatrixUWP
     /// </summary>
     public sealed partial class StrankaJedenChat : Page
     {
+
+        private MatrixSeznamChatu_JedenChat chatKterySeMaZobrazit = new MatrixSeznamChatu_JedenChat();
+
         public StrankaJedenChat()
         {
             this.InitializeComponent();
-            PrvotniNacteniChatu();
         }
 
-        private async void PrvotniNacteniChatu()
+        private async Task PrvotniNacteniChatu()
         {
             try
             {
+                ObrazekKonverzace.ImageSource = chatKterySeMaZobrazit.ObrazekChatu;
+                NazevKonverzace.Text = chatKterySeMaZobrazit.NazevChatu;
 
+                string UrlNacistZpravyChatu = "https://" + StrankaChaty.matrixServer + "/_matrix/client/v3/rooms/" + chatKterySeMaZobrazit.IdChatu + "/messages?dir=b&limit=50";
+                var aaa = await NacistStrankuRestApi(UrlNacistZpravyChatu);
             }
             catch
             {
@@ -46,11 +43,27 @@ namespace MatrixUWP
             }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
             MainPage.PageHeader.Text = "Detail konverzace";
+
+            try
+            {
+                chatKterySeMaZobrazit = (MatrixSeznamChatu_JedenChat)e.Parameter;
+                await PrvotniNacteniChatu();
+            }
+            catch
+            {
+                _ = await new ContentDialog()
+                {
+                    Title = "Chyba při komunikaci mezi stránkami aplikace",
+                    CloseButtonText = "Zavřít"
+                }.ShowAsync();
+
+                return;
+            }
 
         }
 

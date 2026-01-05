@@ -31,43 +31,20 @@ namespace MatrixUWP
     {
         private string pristupovyToken = ApplicationData.Current.LocalSettings.Values["pristupovyToken"]?.ToString();
         private string uzivatelskeJmeno = ApplicationData.Current.LocalSettings.Values["uzivatelskeJmeno"]?.ToString();
-        private string matrixServer = ApplicationData.Current.LocalSettings.Values["MatrixServer"]?.ToString();
+        public static string matrixServer = ApplicationData.Current.LocalSettings.Values["MatrixServer"]?.ToString();
 
         private List<MatrixSeznamChatu_JedenChat> MatrixSeznamChatu = new List<MatrixSeznamChatu_JedenChat>();
 
-        string ZiskatHodnotuDictionary(IDictionary<string, object> dictionary, string key)
+        public static string ZiskatHodnotuDictionary(IDictionary<string, object> dictionary, string key)
         {
             if (dictionary == null)
                 return null;
 
-            return dictionary.TryGetValue(key, out var obj)
+            return dictionary.TryGetValue(key, out object obj)
                 ? obj?.ToString()
                 : null;
 
         }
-
-        async Task<BitmapImage> NacistMatrixObrazek(string urlObrazku)
-        {
-            if (urlObrazku == null)
-            {
-                return null;
-            }
-
-            BitmapImage matrixObrazek = new BitmapImage();
-
-            IBuffer BufferObrazku = await NacistBufferRestApi("https://" + matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6));
-
-            InMemoryRandomAccessStream memoryStream = new InMemoryRandomAccessStream();
-            DataWriter writer = new DataWriter(memoryStream);
-            writer.WriteBuffer(BufferObrazku);
-            await writer.StoreAsync();
-            memoryStream.Seek(0);
-
-            await matrixObrazek.SetSourceAsync(memoryStream);
-
-            return matrixObrazek;
-        }
-
 
         public StrankaChaty()
         {
@@ -291,7 +268,7 @@ namespace MatrixUWP
         {
             MatrixSeznamChatu_JedenChat kliknutyChat = (MatrixSeznamChatu_JedenChat)e.ClickedItem;
 
-            MainPage.NavigovatNaStranku(typeof(StrankaJedenChat), kliknutyChat.IdChatu);
+            _ = MainPage.ContentFrame.Navigate(typeof(StrankaJedenChat), kliknutyChat);
         }
     }
 }
