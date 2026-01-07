@@ -22,4 +22,24 @@ namespace MatrixUWP
             throw new NotImplementedException();
         }
     }
+
+    public class KonvertorSirkaBublinyZpravy : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value is double width)
+            {
+                return width * 0.7; // 70%
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

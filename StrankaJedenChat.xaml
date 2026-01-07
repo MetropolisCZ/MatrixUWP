@@ -6,10 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    x:Name="PageStrankaJedenChat">
 
     <Page.Resources>
         <local:KonvertorJedenChatTextZpravy x:Key="KonvertorJedenChatTextZpravy"/>
+        <local:KonvertorSirkaBublinyZpravy x:Key="KonvertorSirkaBublinyZpravy"/>
     </Page.Resources>
 
     <Grid>
@@ -21,7 +23,7 @@
 
         <Grid Grid.Row="0" Background="#44cccccc" Padding="5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
@@ -41,7 +43,7 @@
             <TextBlock x:Name="StackPanelNacitani_Stav"></TextBlock>
         </StackPanel>
 
-        <ListView x:Name="ListViewZpravyChaty" Grid.Row="1" HorizontalAlignment="Stretch" SelectionMode="None" IsItemClickEnabled="False" IsSwipeEnabled="False" Visibility="Collapsed">
+        <ListView x:Name="ListViewZpravyChaty" Grid.Row="1" HorizontalAlignment="Stretch" SelectionMode="None" IsItemClickEnabled="False" IsSwipeEnabled="False" Visibility="Collapsed" Padding="0,0,0,7">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView" VerticalAlignment="Bottom"/>
@@ -49,11 +51,11 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Height="Auto" Margin="4" Background="#22cccccc" CornerRadius="3"> <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
+                    <Grid Height="Auto" Margin="4" Background="#22cccccc" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}"> <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
                         <Border>
                             <StackPanel Width="Auto" Padding="10,2">
                                 <!--Background="{x:Bind BgColor}"-->
-                                <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" />
+                                <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" TextWrapping="Wrap" />
                                 <TextBlock Text="{Binding Type}" />
                             </StackPanel>
                         </Border>
