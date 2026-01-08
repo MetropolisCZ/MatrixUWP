@@ -30,7 +30,7 @@ namespace MatrixUWP
     public sealed partial class StrankaChaty : Page
     {
         private string pristupovyToken = ApplicationData.Current.LocalSettings.Values["pristupovyToken"]?.ToString();
-        private string uzivatelskeJmeno = ApplicationData.Current.LocalSettings.Values["uzivatelskeJmeno"]?.ToString();
+        public static string uzivatelskeJmeno = ApplicationData.Current.LocalSettings.Values["uzivatelskeJmeno"]?.ToString();
         public static string matrixServer = ApplicationData.Current.LocalSettings.Values["MatrixServer"]?.ToString();
 
         private List<MatrixSeznamChatu_JedenChat> MatrixSeznamChatu = new List<MatrixSeznamChatu_JedenChat>();
@@ -167,7 +167,7 @@ namespace MatrixUWP
 
                     if (dateTimePosledniZpravy.Day == DateTime.Now.Day && dateTimePosledniZpravy.Month == DateTime.Now.Month && dateTimePosledniZpravy.Year == DateTime.Now.Year) // Je to dneska, dát jenom čas
                     {
-                        zobrazovanyCasPosledniZpravy = dateTimePosledniZpravy.ToString("HH:mm");
+                        zobrazovanyCasPosledniZpravy = dateTimePosledniZpravy.ToString("H:mm");
                     }
                     else if (dateTimePosledniZpravy.Day == DateTime.Now.AddDays(-1).Day && dateTimePosledniZpravy.Month == DateTime.Now.AddDays(-1).Month && dateTimePosledniZpravy.Year == DateTime.Now.AddDays(-1).Year)
                     {

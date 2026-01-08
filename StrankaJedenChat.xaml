@@ -11,7 +11,74 @@
 
     <Page.Resources>
         <local:KonvertorJedenChatTextZpravy x:Key="KonvertorJedenChatTextZpravy"/>
+        <local:KonvertorJedenChatCasOdeslaniZpravy x:Key="KonvertorJedenChatCasOdeslaniZpravy"/>
         <local:KonvertorSirkaBublinyZpravy x:Key="KonvertorSirkaBublinyZpravy"/>
+
+        <local:VybratDruhZpravyDleObsahu x:Key="VybratDruhZpravyDleObsahu" SablonaZprava_OdUzivatele_Text="{StaticResource SablonaZprava_OdUzivatele_Text}" SablonaZprava_OdNekohoJineho_Text="{StaticResource SablonaZprava_OdNekohoJineho_Text}" SablonaZprava_Clen="{StaticResource SablonaZprava_Clen}" SablonaZprava_Reakce="{StaticResource SablonaZprava_Reakce}" SablonaZprava_ChybaNacitani="{StaticResource SablonaZprava_ChybaNacitani}"/>
+
+        <DataTemplate x:Key="SablonaZprava_OdUzivatele_Text">
+            <Grid Height="Auto" Margin="4" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}" HorizontalAlignment="Right">
+                <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
+                <Grid.Background>
+                    <SolidColorBrush Color="{ThemeResource SystemAccentColorDark2}"/>
+                </Grid.Background>
+                <Border>
+                    <StackPanel Width="Auto" Padding="10,2">
+                        <!--Background="{x:Bind BgColor}"-->
+                        <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" TextWrapping="Wrap" />
+                        <TextBlock Foreground="LightGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SablonaZprava_OdNekohoJineho_Text">
+            <Grid Height="Auto" Margin="4" Background="#22cccccc" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}" HorizontalAlignment="Left">
+                <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
+                <Border>
+                    <StackPanel Width="Auto" Padding="10,2">
+                        <!--Background="{x:Bind BgColor}"-->
+                        <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" TextWrapping="Wrap" />
+                        <TextBlock Foreground="DarkGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SablonaZprava_Clen">
+            <StackPanel  Padding="10,10">
+                <!--Background="{x:Bind BgColor}"-->
+                <TextBlock Text="" TextWrapping="Wrap">
+                    <Run Text="Uživatel"></Run>
+                    <Run Text="{Binding Sender}"></Run>
+                    <Run Text="se připojil do konverzace"></Run>
+                </TextBlock>
+                <!--<TextBlock Text="{Binding Type}" />-->
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SablonaZprava_Reakce">
+            <StackPanel Padding="10,10" HorizontalAlignment="Center">
+                <TextBlock Foreground="Gray" TextWrapping="Wrap">
+                        <Run Text="Uživatel"></Run>
+                        <Run Text="{Binding Sender}"></Run>
+                        <Run Text="přidal reakci"></Run>
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SablonaZprava_ChybaNacitani">
+            <Grid Height="Auto" Margin="4" Background="Red" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}">
+                <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
+                <Border>
+                    <StackPanel Width="Auto" Padding="10,2">
+                        <!--Background="{x:Bind BgColor}"-->
+                        <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding Type}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid>
@@ -44,6 +111,11 @@
         </StackPanel>
 
         <ListView x:Name="ListViewZpravyChaty" Grid.Row="1" HorizontalAlignment="Stretch" SelectionMode="None" IsItemClickEnabled="False" IsSwipeEnabled="False" Visibility="Collapsed" Padding="0,0,0,7">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView" VerticalAlignment="Bottom"/>
@@ -51,15 +123,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Height="Auto" Margin="4" Background="#22cccccc" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}"> <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
-                        <Border>
-                            <StackPanel Width="Auto" Padding="10,2">
-                                <!--Background="{x:Bind BgColor}"-->
-                                <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" TextWrapping="Wrap" />
-                                <TextBlock Text="{Binding Type}" />
-                            </StackPanel>
-                        </Border>
-                    </Grid>
+                    <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource VybratDruhZpravyDleObsahu}" Grid.RowSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,15,0" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
