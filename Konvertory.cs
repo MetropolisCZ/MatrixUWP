@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media.Imaging;
 using static MatrixUWP.ApiWebKlient;
 
 namespace MatrixUWP
@@ -63,6 +64,7 @@ namespace MatrixUWP
         public DataTemplate SablonaZprava_ChybaNacitani { get; set; }
         public DataTemplate SablonaZprava_Clen { get; set; }
         public DataTemplate SablonaZprava_Reakce { get; set; }
+        public DataTemplate SablonaZprava_Nezobrazovat { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -121,6 +123,10 @@ namespace MatrixUWP
                 {
                     return SablonaZprava_Clen;
                 }
+                else if (jednaZprava.Type == "m.room.redaction")
+                {
+                    return SablonaZprava_Nezobrazovat;
+                }
                 else
                 {
                     return SablonaZprava_ChybaNacitani;
@@ -139,6 +145,19 @@ namespace MatrixUWP
         {
             long unixoveSekundyPosledniZpravy = (long)value;
             return DateTimeOffset.FromUnixTimeMilliseconds(unixoveSekundyPosledniZpravy).LocalDateTime.ToString("H:mm");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class KonvertorViditelnostiNullJeVisible : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return (value as BitmapImage) == null ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

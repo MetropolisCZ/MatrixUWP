@@ -92,6 +92,8 @@ namespace MatrixUWP
 
         [JsonProperty("origin_server_ts")]
         public long OriginServerTs { get; set; }
+
+        public BitmapImage ObrazekZpravy { get; set; }
     }
 
     /*public class MessageContent

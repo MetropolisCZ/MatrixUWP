@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Networking.BackgroundTransfer;
@@ -123,19 +126,41 @@ namespace MatrixUWP
 
             IBuffer BufferObrazku = await NacistBufferRestApi("https://" + StrankaChaty.matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6));
 
-            InMemoryRandomAccessStream memoryStream = new InMemoryRandomAccessStream();
-            DataWriter writer = new DataWriter(memoryStream);
-            writer.WriteBuffer(BufferObrazku);
-            await writer.StoreAsync();
+            var memoryStream = new InMemoryRandomAccessStream();
+            await memoryStream.WriteAsync(BufferObrazku);
             memoryStream.Seek(0);
 
-            await matrixObrazek.SetSourceAsync(memoryStream);
+            /*Debug.WriteLine("BufferObrazku.Length: " + BufferObrazku.Length);
+            var bytes = BufferObrazku.ToArray();
+            Debug.WriteLine(BitConverter.ToString(bytes.Take(20).ToArray()));*/
+            try
+            {
+                await matrixObrazek.SetSourceAsync(memoryStream);
+                return matrixObrazek;
+            }
+            catch
+            {
+                byte[] bytes = BufferObrazku.ToArray();
+                bool jeToHeic =
+                    bytes.Length > 12 &&
+                    bytes[4] == 0x66 && // 'f'
+                    bytes[5] == 0x74 && // 't'
+                    bytes[6] == 0x79 && // 'y'
+                    bytes[7] == 0x70;   // 'p'
+                // Výchozí iPhone formát, není podporovaný na W10M
 
-            return matrixObrazek;
+                if (jeToHeic)
+                {
+                    Debug.WriteLine("Nepodporovaný formát obrázku");
+                }
+                else
+                {
+                    Debug.WriteLine("Neznámá chyba při načítání obrázku");
+                }
+
+                return null;
+            }
         }
-
-
-
 
 
         public static async Task<IBuffer> NacistBufferRestApi(string UrlkZiskani, TypyHTTPrequestu typHTTPrequestu = TypyHTTPrequestu.Get, string teloHTTPrequestu = null)

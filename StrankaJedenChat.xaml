@@ -13,53 +13,109 @@
         <local:KonvertorJedenChatTextZpravy x:Key="KonvertorJedenChatTextZpravy"/>
         <local:KonvertorJedenChatCasOdeslaniZpravy x:Key="KonvertorJedenChatCasOdeslaniZpravy"/>
         <local:KonvertorSirkaBublinyZpravy x:Key="KonvertorSirkaBublinyZpravy"/>
+        <local:KonvertorViditelnostiNullJeVisible x:Key="KonvertorViditelnostiNullJeVisible"/>
 
-        <local:VybratDruhZpravyDleObsahu x:Key="VybratDruhZpravyDleObsahu" SablonaZprava_OdUzivatele_Text="{StaticResource SablonaZprava_OdUzivatele_Text}" SablonaZprava_OdNekohoJineho_Text="{StaticResource SablonaZprava_OdNekohoJineho_Text}" SablonaZprava_Clen="{StaticResource SablonaZprava_Clen}" SablonaZprava_Reakce="{StaticResource SablonaZprava_Reakce}" SablonaZprava_ChybaNacitani="{StaticResource SablonaZprava_ChybaNacitani}"/>
+        <local:VybratDruhZpravyDleObsahu x:Key="VybratDruhZpravyDleObsahu"
+                                         SablonaZprava_OdUzivatele_Text="{StaticResource SablonaZprava_OdUzivatele_Text}" 
+                                         SablonaZprava_OdUzivatele_Obrazek="{StaticResource SablonaZprava_OdUzivatele_Obrazek}"
+                                         SablonaZprava_OdUzivatele_Video="{StaticResource SablonaZprava_OdUzivatele_Video}"
+                                         SablonaZprava_OdNekohoJineho_Text="{StaticResource SablonaZprava_OdNekohoJineho_Text}"
+                                         SablonaZprava_OdNekohoJineho_Obrazek="{StaticResource SablonaZprava_OdNekohoJineho_Obrazek}"
+                                         SablonaZprava_OdNekohoJineho_Video="{StaticResource SablonaZprava_OdNekohoJineho_Video}"
+                                         SablonaZprava_Clen="{StaticResource SablonaZprava_Clen}" 
+                                         SablonaZprava_Reakce="{StaticResource SablonaZprava_Reakce}" 
+                                         SablonaZprava_ChybaNacitani="{StaticResource SablonaZprava_ChybaNacitani}"/>
 
         <DataTemplate x:Key="SablonaZprava_OdUzivatele_Text">
             <Grid Height="Auto" Margin="4" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}" HorizontalAlignment="Right">
-                <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
                 <Grid.Background>
                     <SolidColorBrush Color="{ThemeResource SystemAccentColorDark2}"/>
                 </Grid.Background>
-                <Border>
-                    <StackPanel Width="Auto" Padding="10,2">
-                        <!--Background="{x:Bind BgColor}"-->
-                        <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" TextWrapping="Wrap" />
-                        <TextBlock Foreground="LightGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" />
-                    </StackPanel>
-                </Border>
+                <StackPanel Width="Auto" Padding="10,3,10,6">
+                    <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                    <TextBlock Foreground="LightGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" HorizontalAlignment="Right" />
+                </StackPanel>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="SablonaZprava_OdNekohoJineho_Text">
             <Grid Height="Auto" Margin="4" Background="#22cccccc" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}" HorizontalAlignment="Left">
-                <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
-                <Border>
-                    <StackPanel Width="Auto" Padding="10,2">
-                        <!--Background="{x:Bind BgColor}"-->
-                        <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" TextWrapping="Wrap" />
-                        <TextBlock Foreground="DarkGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" />
-                    </StackPanel>
-                </Border>
+                <StackPanel Width="Auto" Padding="10,3,10,6">
+                    <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                    <TextBlock Foreground="DarkGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+            
+        <!-- Šablona zprávy s videem -->
+        <DataTemplate x:Key="SablonaZprava_OdUzivatele_Video">
+            <Grid Height="Auto" Margin="4" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}" HorizontalAlignment="Right">
+                <Grid.Background>
+                    <SolidColorBrush Color="{ThemeResource SystemAccentColorDark2}"/>
+                </Grid.Background>
+                <StackPanel Width="Auto" Padding="10,3,10,6">
+                    <TextBlock Text="Video" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                    <TextBlock Foreground="LightGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" HorizontalAlignment="Right" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SablonaZprava_OdNekohoJineho_Video">
+            <Grid Height="Auto" Margin="4" Background="#22cccccc" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}" HorizontalAlignment="Left">
+                <StackPanel Width="Auto" Padding="10,3,10,6">
+                    <TextBlock Text="Video" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                    <TextBlock Foreground="DarkGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <!-- Šablona zprávy s obrázkem -->
+        <DataTemplate x:Key="SablonaZprava_OdUzivatele_Obrazek">
+            <Grid Height="Auto" Margin="4" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}" HorizontalAlignment="Right">
+                <Grid.Background>
+                    <SolidColorBrush Color="{ThemeResource SystemAccentColorDark2}"/>
+                </Grid.Background>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Image Source="{Binding ObrazekZpravy}" MaxHeight="400"></Image>
+                <StackPanel Visibility="{Binding ObrazekZpravy, Converter={StaticResource KonvertorViditelnostiNullJeVisible}}" Margin="10,6">
+                    <TextBlock Text="Nepodporovaný typ obrázku" Margin="0,0,0,5"></TextBlock>
+                    <Button Content="Stáhnout"></Button>
+                </StackPanel>
+                <TextBlock Grid.Row="1" Foreground="LightGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" HorizontalAlignment="Right" Margin="0,5,10,0" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SablonaZprava_OdNekohoJineho_Obrazek">
+            <Grid Height="Auto" Margin="4" Background="#22cccccc" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}" HorizontalAlignment="Left">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" MaxHeight="500"></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Image Source="{Binding ObrazekZpravy}" MaxHeight="400"></Image>
+                <StackPanel Visibility="{Binding ObrazekZpravy, Converter={StaticResource KonvertorViditelnostiNullJeVisible}}">
+                    <TextBlock Text="Nepodporovaný typ obrázku"></TextBlock>
+                    <Button Content="Stáhnout"></Button>
+                </StackPanel>
+                <TextBlock Grid.Row="1" Foreground="LightGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" Margin="10,5,0,0" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="SablonaZprava_Clen">
-            <StackPanel  Padding="10,10">
-                <!--Background="{x:Bind BgColor}"-->
-                <TextBlock Text="" TextWrapping="Wrap">
+            <StackPanel Padding="10,10" HorizontalAlignment="Center">
+                <TextBlock Foreground="Gray" TextWrapping="Wrap" TextAlignment="Center">
                     <Run Text="Uživatel"></Run>
                     <Run Text="{Binding Sender}"></Run>
                     <Run Text="se připojil do konverzace"></Run>
                 </TextBlock>
-                <!--<TextBlock Text="{Binding Type}" />-->
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="SablonaZprava_Reakce">
             <StackPanel Padding="10,10" HorizontalAlignment="Center">
-                <TextBlock Foreground="Gray" TextWrapping="Wrap">
+                <TextBlock Foreground="Gray" TextWrapping="Wrap" TextAlignment="Center">
                         <Run Text="Uživatel"></Run>
                         <Run Text="{Binding Sender}"></Run>
                         <Run Text="přidal reakci"></Run>
@@ -69,10 +125,8 @@
 
         <DataTemplate x:Key="SablonaZprava_ChybaNacitani">
             <Grid Height="Auto" Margin="4" Background="Red" CornerRadius="2" MaxWidth="{Binding ElementName=PageStrankaJedenChat, Path=ActualWidth, Converter={StaticResource KonvertorSirkaBublinyZpravy}}">
-                <!--HorizontalAlignment="{x:Bind MsgAlignment}"-->
                 <Border>
                     <StackPanel Width="Auto" Padding="10,2">
-                        <!--Background="{x:Bind BgColor}"-->
                         <TextBlock Text="{Binding Content, Converter={StaticResource KonvertorJedenChatTextZpravy}}" TextWrapping="Wrap" />
                         <TextBlock Text="{Binding Type}" />
                     </StackPanel>

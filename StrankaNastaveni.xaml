@@ -2,7 +2,6 @@
     x:Class="MatrixUWP.StrankaNastaveni"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:MetropolisOnedriveKlient"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -32,12 +31,12 @@
 
 
             <TextBlock TextWrapping="Wrap" Text="O aplikaci" FontSize="23" Margin="0,50,0,0" />
-            <TextBlock TextWrapping="Wrap" Text="UWP klient pro Matrix" />
-            <TextBlock TextWrapping="Wrap" Text="Firma Metropolis 2025, všechna práva na kód vyhrazena"></TextBlock>
+            <TextBlock TextWrapping="Wrap" Text="Metropolis klient pro Matrix" />
+            <TextBlock TextWrapping="Wrap" Text="Firma Metropolis 2026, všechna práva na kód vyhrazena"></TextBlock>
             <HyperlinkButton Content="Web firmy Metropolis" NavigateUri="http://www.metropolis.xf.cz/webdesign/index.php?zdrojZobrazeni=MetropolisMatrixKlient" />
             <!--<HyperlinkButton Content="Ochrana osobních údajů a odpovědnost" NavigateUri="https://github.com/MetropolisCZ/MetropolisOnedriveKlient/blob/master/README.md"></HyperlinkButton>-->
 
-            <TextBlock TextWrapping="Wrap" Margin="0,7,0,0" Text="Verze aplikace: 0.1.0" />
+            <TextBlock TextWrapping="Wrap" Margin="0,7,0,0" Text="Verze aplikace: 0.3.0" />
 
         </StackPanel>
 

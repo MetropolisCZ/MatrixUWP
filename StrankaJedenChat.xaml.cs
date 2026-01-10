@@ -42,6 +42,16 @@ namespace MatrixUWP
                 zpravyAktualniKonverzace = JsonConvert.DeserializeObject<ZpravyAktualniKonverzace>(aaa);
                 // Na indexu 0 je nejnovější zpráva (řazení od nejnovějších)
 
+                StackPanelNacitani_Stav.Text = "Načítání souborů médií";
+                foreach (Event JednaZpravaAktualniKonverzace in zpravyAktualniKonverzace.Zpravy)
+                {
+                    if (JednaZpravaAktualniKonverzace.Type == "m.room.message" && ZiskatHodnotuDictionary(JednaZpravaAktualniKonverzace.Content, "msgtype") == "m.image")
+                    {
+                        JednaZpravaAktualniKonverzace.ObrazekZpravy = await NacistMatrixObrazek(ZiskatHodnotuDictionary(JednaZpravaAktualniKonverzace.Content, "url")) ?? null;
+                    }
+                }
+
+
                 StackPanelNacitani.Visibility = Visibility.Collapsed;
                 ListViewZpravyChaty.Visibility = Visibility.Visible;
                 ListViewZpravyChaty.ItemsSource = zpravyAktualniKonverzace.Zpravy.Reverse();
