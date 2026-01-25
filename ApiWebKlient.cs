@@ -30,6 +30,9 @@ namespace MatrixUWP
         public static BackgroundDownloader backgroundDownloader = new BackgroundDownloader();
         public static BackgroundUploader backgroundUploader = new BackgroundUploader() { Method = "PUT" };
 
+        public static StorageFolder DocasnaSlozka { get; set; } = ApplicationData.Current.TemporaryFolder;
+
+
         public enum TypyHTTPrequestu
         {
             Get,
@@ -113,8 +116,6 @@ namespace MatrixUWP
 
         }
 
-
-
         public static async Task<BitmapImage> NacistMatrixObrazek(string urlObrazku)
         {
             if (urlObrazku == null)
@@ -130,9 +131,6 @@ namespace MatrixUWP
             await memoryStream.WriteAsync(BufferObrazku);
             memoryStream.Seek(0);
 
-            /*Debug.WriteLine("BufferObrazku.Length: " + BufferObrazku.Length);
-            var bytes = BufferObrazku.ToArray();
-            Debug.WriteLine(BitConverter.ToString(bytes.Take(20).ToArray()));*/
             try
             {
                 await matrixObrazek.SetSourceAsync(memoryStream);
@@ -147,7 +145,7 @@ namespace MatrixUWP
                     bytes[5] == 0x74 && // 't'
                     bytes[6] == 0x79 && // 'y'
                     bytes[7] == 0x70;   // 'p'
-                // Výchozí iPhone formát, není podporovaný na W10M
+                                        // Výchozí iPhone formát, není podporovaný na W10M
 
                 if (jeToHeic)
                 {
@@ -160,6 +158,78 @@ namespace MatrixUWP
 
                 return null;
             }
+        }
+
+
+
+        public static async Task<BitmapImage> NacistMatrixObrazekDoDocasneSlozky(string urlObrazku, string nazevStazenehoObrazku)
+        {
+
+            if (urlObrazku == null || nazevStazenehoObrazku == null)
+            {
+                return null;
+            }
+
+            BitmapImage matrixObrazek = new BitmapImage();
+
+            IBuffer BufferObrazku;
+            StorageFile ulozenyAktualniObrazekFile;
+
+            // Stáhnout
+
+            Debug.WriteLine("Stahování obrázku ze serveru");
+
+
+            BufferObrazku = await NacistBufferRestApi("https://" + StrankaChaty.matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6));
+
+
+            var memoryStream = new InMemoryRandomAccessStream();
+            await memoryStream.WriteAsync(BufferObrazku);
+            memoryStream.Seek(0);
+
+            try
+            {
+                await matrixObrazek.SetSourceAsync(memoryStream);
+            }
+            catch
+            {
+                byte[] bytes = (BufferObrazku).ToArray();
+                bool jeToHeic =
+                    bytes.Length > 12 &&
+                    bytes[4] == 0x66 && // 'f'
+                    bytes[5] == 0x74 && // 't'
+                    bytes[6] == 0x79 && // 'y'
+                    bytes[7] == 0x70;   // 'p'
+                                        // Výchozí iPhone formát, není podporovaný na W10M
+
+                if (jeToHeic)
+                {
+                    Debug.WriteLine("Nepodporovaný formát obrázku");
+                }
+                else
+                {
+                    Debug.WriteLine("Neznámá chyba při načítání obrázku");
+                }
+
+                return null;
+            }
+
+            ulozenyAktualniObrazekFile = await DocasnaSlozka.CreateFileAsync(nazevStazenehoObrazku, CreationCollisionOption.GenerateUniqueName);
+
+            await FileIO.WriteBufferAsync(ulozenyAktualniObrazekFile, BufferObrazku);
+
+            return matrixObrazek;
+
+
+
+            // Načíst
+            /*IRandomAccessStream fileStream = await ulozenyAktualniObrazekFile.OpenAsync(FileAccessMode.Read);
+
+            await matrixObrazek.SetSourceAsync(fileStream);
+
+            zpravasObrazkem.ObrazekZpravy = matrixObrazek;
+            zpravasObrazkem.NazevObrazkuZpravy = nazevAktualnihoObrazku;*/
+
         }
 
 
@@ -247,6 +317,22 @@ namespace MatrixUWP
             return dictionary.TryGetValue(key, out object obj)
                 ? obj?.ToString()
                 : null;
+
+        }
+
+
+
+        public static IDictionary<string, object> ZiskatHodnotuDictionaryVratitDictionary(IDictionary<string, object> dictionary, string key)
+        {
+            if (dictionary == null) return null;
+            if (!dictionary.TryGetValue(key, out object obj)) return null;
+
+            if (obj is JObject jObj)
+            {
+                return jObj.ToObject<Dictionary<string, object>>();
+            }
+
+            return obj as IDictionary<string, object>;
 
         }
 

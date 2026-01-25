@@ -79,10 +79,10 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="30"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Image Source="{Binding ObrazekZpravy}" MaxHeight="400"></Image>
+                <Image Source="{Binding ObrazekZpravy}" MaxHeight="400" Tapped="ObrazekVeZprave_Kliknuto"></Image>
                 <StackPanel Visibility="{Binding ObrazekZpravy, Converter={StaticResource KonvertorViditelnostiNullJeVisible}}" Margin="10,6">
                     <TextBlock Text="Nepodporovaný typ obrázku" Margin="0,0,0,5"></TextBlock>
-                    <Button Content="Stáhnout"></Button>
+                    <Button Content="Stáhnout" Click="StahnoutObrazek_Click"></Button>
                 </StackPanel>
                 <TextBlock Grid.Row="1" Foreground="LightGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" HorizontalAlignment="Right" Margin="0,5,10,0" />
             </Grid>
@@ -94,10 +94,10 @@
                     <RowDefinition Height="Auto" MaxHeight="500"></RowDefinition>
                     <RowDefinition Height="30"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Image Source="{Binding ObrazekZpravy}" MaxHeight="400"></Image>
-                <StackPanel Visibility="{Binding ObrazekZpravy, Converter={StaticResource KonvertorViditelnostiNullJeVisible}}">
+                <Image Source="{Binding ObrazekZpravy}" MaxHeight="400" Tapped="ObrazekVeZprave_Kliknuto"></Image>
+                <StackPanel Visibility="{Binding ObrazekZpravy, Converter={StaticResource KonvertorViditelnostiNullJeVisible}}" Margin="10,6">
                     <TextBlock Text="Nepodporovaný typ obrázku"></TextBlock>
-                    <Button Content="Stáhnout"></Button>
+                    <Button Content="Stáhnout" Click="StahnoutObrazek_Click"></Button>
                 </StackPanel>
                 <TextBlock Grid.Row="1" Foreground="LightGray" Text="{Binding OriginServerTs, Converter={StaticResource KonvertorJedenChatCasOdeslaniZpravy}}" Margin="10,5,0,0" />
             </Grid>

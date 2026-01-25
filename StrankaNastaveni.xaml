@@ -36,7 +36,7 @@
             <HyperlinkButton Content="Web firmy Metropolis" NavigateUri="http://www.metropolis.xf.cz/webdesign/index.php?zdrojZobrazeni=MetropolisMatrixKlient" />
             <!--<HyperlinkButton Content="Ochrana osobních údajů a odpovědnost" NavigateUri="https://github.com/MetropolisCZ/MetropolisOnedriveKlient/blob/master/README.md"></HyperlinkButton>-->
 
-            <TextBlock TextWrapping="Wrap" Margin="0,7,0,0" Text="Verze aplikace: 0.3.0" />
+            <TextBlock TextWrapping="Wrap" Margin="0,7,0,0" Text="Verze aplikace: 0.3.1" />
 
         </StackPanel>
 

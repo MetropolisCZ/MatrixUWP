@@ -3,7 +3,9 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
@@ -76,8 +78,15 @@ namespace MatrixUWP
         public string PrevBatch { get; set; }
     }
 
-    public class Event
+    public class Event : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         [JsonProperty("type")]
         public string Type { get; set; }
 
@@ -85,7 +94,7 @@ namespace MatrixUWP
         public string Sender { get; set; }
 
         [JsonProperty("content")]
-        public Dictionary<string, object> Content { get; set; } //MessageContent Content { get; set; }
+        public Dictionary<string, object> Content { get; set; }
 
         [JsonProperty("event_id")]
         public string EventId { get; set; }
@@ -93,8 +102,25 @@ namespace MatrixUWP
         [JsonProperty("origin_server_ts")]
         public long OriginServerTs { get; set; }
 
-        public BitmapImage ObrazekZpravy { get; set; }
+        private BitmapImage _obrazekZpravy;
+        public BitmapImage ObrazekZpravy
+        {
+            get => _obrazekZpravy;
+            set
+            {
+                if (_obrazekZpravy != value)
+                {
+                    _obrazekZpravy = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string NazevObrazkuZpravy { get; set; }
     }
+
+
+
 
     /*public class MessageContent
     {
