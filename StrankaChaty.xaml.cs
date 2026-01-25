@@ -85,30 +85,35 @@ namespace MatrixUWP
 
                         ?? null;
 
-                    if (nazevChatu == null)
+                    //if (nazevChatu == null)
+                    //{
+
+                    // Chtěl bych zkusit načítat všechny uživatele vždycky – kvůli použití potom v konverzaci. Může to být zásadní zpomalení, lepší by bylo to načítat až potom, když uživatel vybere tu jednotlivou konverzaci
+                    foreach (var jedenClenChatu in jedenChatMatrix.Value.State?.Events?
+                            .Where(e =>
+                                e.Type == "m.room.member"
+                                && ZiskatHodnotuDictionary(e.Content, "displayname") != null
+                                && ZiskatHodnotuDictionary(e.Content, "displayname") != uzivatelskeJmeno
+                                /*&& ZiskatHodnotuDictionary(e.Content, "displayname")?.Contains("bridge bot") == false*/))
                     {
-                        foreach (var jedenClenChatu in jedenChatMatrix.Value.State?.Events?
-                                .Where(e =>
-                                    e.Type == "m.room.member"
-                                    && ZiskatHodnotuDictionary(e.Content, "displayname") != null
-                                    && ZiskatHodnotuDictionary(e.Content, "displayname") != uzivatelskeJmeno
-                                    /*&& ZiskatHodnotuDictionary(e.Content, "displayname")?.Contains("bridge bot") == false*/))
+                        clenoveChatu.Add(new ClenChatu { ZobrazovaneJmeno = ZiskatHodnotuDictionary(jedenClenChatu.Content, "displayname"), ProfilovaFotka = ZiskatHodnotuDictionary(jedenClenChatu.Content, "avatar_url"), MatrixIdUzivatele = jedenClenChatu.Sender });
+                    }
+
+                    foreach (var jedenClenChatu in jedenChatMatrix.Value.Timeline?.Events?
+                            .Where(e =>
+                                e.Type == "m.room.member"
+                                && ZiskatHodnotuDictionary(e.Content, "displayname") != null
+                                && ZiskatHodnotuDictionary(e.Content, "displayname") != uzivatelskeJmeno
+                                /*&& ZiskatHodnotuDictionary(e.Content, "displayname")?.Contains("bridge bot") == false*/))
+                    {
+                        if (!clenoveChatu.Any(x => x.ZobrazovaneJmeno == ZiskatHodnotuDictionary(jedenClenChatu.Content, "displayname")))
                         {
                             clenoveChatu.Add(new ClenChatu { ZobrazovaneJmeno = ZiskatHodnotuDictionary(jedenClenChatu.Content, "displayname"), ProfilovaFotka = ZiskatHodnotuDictionary(jedenClenChatu.Content, "avatar_url"), MatrixIdUzivatele = jedenClenChatu.Sender });
                         }
+                    }
 
-                        foreach (var jedenClenChatu in jedenChatMatrix.Value.Timeline?.Events?
-                                .Where(e =>
-                                    e.Type == "m.room.member"
-                                    && ZiskatHodnotuDictionary(e.Content, "displayname") != null
-                                    && ZiskatHodnotuDictionary(e.Content, "displayname") != uzivatelskeJmeno
-                                    /*&& ZiskatHodnotuDictionary(e.Content, "displayname")?.Contains("bridge bot") == false*/))
-                        {
-                            if (!clenoveChatu.Any(x => x.ZobrazovaneJmeno == ZiskatHodnotuDictionary(jedenClenChatu.Content, "displayname")))
-                            {
-                                clenoveChatu.Add(new ClenChatu { ZobrazovaneJmeno = ZiskatHodnotuDictionary(jedenClenChatu.Content, "displayname"), ProfilovaFotka = ZiskatHodnotuDictionary(jedenClenChatu.Content, "avatar_url"), MatrixIdUzivatele = jedenClenChatu.Sender });
-                            }
-                        }
+                    if (nazevChatu == null)
+                    {
 
                         if (clenoveChatu.Count == 1)
                         {
@@ -135,13 +140,15 @@ namespace MatrixUWP
                                 nazevChatu = "Skupina (" + clenoveChatu[0].ZobrazovaneJmeno + ", " + clenoveChatu[1].ZobrazovaneJmeno + ", …)";
                             }
 
-                            
+
                             if (urlObrazkuChatu == null)
                             {
                                 urlObrazkuChatu = clenoveChatu.LastOrDefault().ProfilovaFotka;
                             }
                         }
                     }
+
+                    //}
 
 
                     
@@ -177,6 +184,8 @@ namespace MatrixUWP
                     {
                         zobrazovanyCasPosledniZpravy = dateTimePosledniZpravy.ToString("d. M. yyyy");
                     }
+
+                    StackPanelNacitani_Stav.Text = "Načítání obrázků konverzací";
 
                     MatrixSeznamChatu.Add(new MatrixSeznamChatu_JedenChat
                     {

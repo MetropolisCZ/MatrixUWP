@@ -53,12 +53,17 @@ namespace MatrixUWP
         public DataTemplate SablonaZprava_OdUzivatele_Video { get; set; }
         public DataTemplate SablonaZprava_OdUzivatele_Zvuk { get; set; }
         public DataTemplate SablonaZprava_OdUzivatele_Soubor { get; set; }
+        public DataTemplate SablonaZprava_OdUzivatele_Smazano { get; set; }
+
+
 
         public DataTemplate SablonaZprava_OdNekohoJineho_Text { get; set; }
         public DataTemplate SablonaZprava_OdNekohoJineho_Obrazek { get; set; }
         public DataTemplate SablonaZprava_OdNekohoJineho_Video { get; set; }
         public DataTemplate SablonaZprava_OdNekohoJineho_Zvuk { get; set; }
         public DataTemplate SablonaZprava_OdNekohoJineho_Soubor { get; set; }
+        public DataTemplate SablonaZprava_OdNekohoJineho_Smazano { get; set; }
+
 
 
         public DataTemplate SablonaZprava_ChybaNacitani { get; set; }
@@ -125,7 +130,9 @@ namespace MatrixUWP
                 }
                 else if (jednaZprava.Type == "m.room.redaction")
                 {
-                    return SablonaZprava_Nezobrazovat;
+                    return jednaZprava.Sender == "@" + StrankaChaty.uzivatelskeJmeno + ":4d2.org"
+                        ? SablonaZprava_OdUzivatele_Smazano
+                        : SablonaZprava_OdNekohoJineho_Smazano;
                 }
                 else
                 {
@@ -158,6 +165,29 @@ namespace MatrixUWP
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             return (value as BitmapImage) == null ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class KonvertorJmenoUzivatelePodleMatrixId : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            string matrixIdUzivatele = (string)value;
+            string zobrazovaneJmeno = StrankaJedenChat.chatKterySeMaZobrazit.ClenoveChatu.Find(x => x.MatrixIdUzivatele == matrixIdUzivatele)?.ZobrazovaneJmeno;
+
+            if (zobrazovaneJmeno != null)
+            {
+                return zobrazovaneJmeno;
+            }
+            else
+            {
+                return matrixIdUzivatele;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

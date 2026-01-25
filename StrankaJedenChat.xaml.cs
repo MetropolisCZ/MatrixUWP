@@ -23,7 +23,7 @@ namespace MatrixUWP
     public sealed partial class StrankaJedenChat : Page
     {
 
-        private MatrixSeznamChatu_JedenChat chatKterySeMaZobrazit = new MatrixSeznamChatu_JedenChat();
+        public static MatrixSeznamChatu_JedenChat chatKterySeMaZobrazit = new MatrixSeznamChatu_JedenChat();
         private ZpravyAktualniKonverzace zpravyAktualniKonverzace = new ZpravyAktualniKonverzace();
 
 
