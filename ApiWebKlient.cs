@@ -232,6 +232,37 @@ namespace MatrixUWP
 
         }
 
+        public async Task<BitmapImage> ObrazekNacistzCacheNeboStahnout(string urlObrazku, string nazevSouboruObrazkuChatu = null, string koncovkaSouboruObrazkuChatu = null)
+        {
+            try
+            {
+                // Při parsování strankachaty získat koncovku souboru a uložit ji
+
+                if (nazevSouboruObrazkuChatu == null || koncovkaSouboruObrazkuChatu == null)
+                { // Není uložen název, stáhnout název
+
+                    HttpResponseMessage httpResponse = new HttpResponseMessage();
+                    httpResponse = await httpClient.GetAsync(new Uri("https://" + StrankaChaty.matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6)));
+                    string aaaa = httpResponse.Content.Headers.ContentType.ToString();
+                    string juhruihgr = aaaa;
+
+                }
+                else
+                {
+
+                }
+
+                IStorageItem ulozenyAktualniObrazek = await DocasnaSlozka.TryGetItemAsync(nazevSouboruObrazkuChatu + "." + koncovkaSouboruObrazkuChatu);
+
+
+                return null;
+            }
+            catch
+            {
+                return await NacistMatrixObrazekDoDocasneSlozky(urlObrazku, nazevSouboruObrazkuChatu + "." + koncovkaSouboruObrazkuChatu);
+            }
+        }
+
 
         public static async Task<IBuffer> NacistBufferRestApi(string UrlkZiskani, TypyHTTPrequestu typHTTPrequestu = TypyHTTPrequestu.Get, string teloHTTPrequestu = null)
         {

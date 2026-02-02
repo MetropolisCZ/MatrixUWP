@@ -185,7 +185,7 @@ namespace MatrixUWP
                         zobrazovanyCasPosledniZpravy = dateTimePosledniZpravy.ToString("d. M. yyyy");
                     }
 
-                    StackPanelNacitani_Stav.Text = "Načítání obrázků konverzací";
+                    //StackPanelNacitani_Stav.Text = "Načítání obrázků konverzací";
 
                     MatrixSeznamChatu.Add(new MatrixSeznamChatu_JedenChat
                     {
@@ -194,7 +194,7 @@ namespace MatrixUWP
                         PosledniZprava = posledniZpravaText,
                         UnixoveSekundyPosledniZpravy = unixoveSekundyPosledniZpravy,
                         ZobrazovanyCasPosledniZpravy = zobrazovanyCasPosledniZpravy,
-                        ObrazekChatu = await NacistMatrixObrazek(urlObrazkuChatu),
+                        ObrazekChatu = await ObrazekNacistzCacheNeboStahnout(urlObrazkuChatu),
                         //Timeline = jedenChatMatrix.Value.Timeline,
                         ClenoveChatu = clenoveChatu // Bez aktuálního uživatele
                                                     //new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(jedenChatMatrix.Value.Timeline?.Events?.LastOrDefault()?.OriginServerTs ?? 0.0)

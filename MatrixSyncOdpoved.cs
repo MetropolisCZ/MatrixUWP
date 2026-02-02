@@ -157,6 +157,8 @@ namespace MatrixUWP
         public DateTime DateTimePosledniZpravy { get; set; }
         public long UnixoveSekundyPosledniZpravy { get; set; }
         public BitmapImage ObrazekChatu { get; set; }
+        public string NazevSouboruObrazkuChatu { get; set; }
+        public string KoncovkaSouboruObrazkuChatu { get; set; }
         public Timeline Timeline { get; set; }
         public List<ClenChatu> ClenoveChatu { get; set; }
         public string ZobrazovanyCasPosledniZpravy { get; set; }
