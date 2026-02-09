@@ -232,7 +232,7 @@ namespace MatrixUWP
 
         }
 
-        public async Task<BitmapImage> ObrazekNacistzCacheNeboStahnout(string urlObrazku, string nazevSouboruObrazkuChatu = null, string koncovkaSouboruObrazkuChatu = null)
+        public async static Task<BitmapImage> ObrazekNacistzCacheNeboStahnout(string urlObrazku, string nazevSouboruObrazkuChatu = null, string koncovkaSouboruObrazkuChatu = null)
         {
             try
             {
@@ -243,19 +243,39 @@ namespace MatrixUWP
 
                     HttpResponseMessage httpResponse = new HttpResponseMessage();
                     httpResponse = await httpClient.GetAsync(new Uri("https://" + StrankaChaty.matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6)));
-                    string aaaa = httpResponse.Content.Headers.ContentType.ToString();
-                    string juhruihgr = aaaa;
+                    string koncovkaObrazku = httpResponse.Content.Headers.ContentType.ToString().Split('/')[1];
+
+                    string novyNazevSouboru = urlObrazku.Split('/').Last() + "." + koncovkaObrazku;
+
+                    IStorageItem ulozenyAktualniObrazek = await DocasnaSlozka.TryGetItemAsync(novyNazevSouboru);
+
+                    if (ulozenyAktualniObrazek != null)
+                    { // Obrázek je v cache, načíst obrázek
+
+                        //Debug.WriteLine("ObrazekNacistzCacheNeboStahnout(): Načítání obrázku z cache");
+
+                        StorageFile ulozenyAktualniObrazekFile = (StorageFile)ulozenyAktualniObrazek;
+                        using (IRandomAccessStream fileStream = await ulozenyAktualniObrazekFile.OpenAsync(FileAccessMode.Read))
+                        {
+                            BitmapImage bitmapImage = new BitmapImage();
+                            await bitmapImage.SetSourceAsync(fileStream);
+                            return bitmapImage;
+                        }
+                    }
+                    else
+                    { // Obrázek není v cache, stáhnout obrázek
+
+                        Debug.WriteLine("ObrazekNacistzCacheNeboStahnout(): Stahování obrázku ze serveru (" + urlObrazku + ")");
+
+                        return await NacistMatrixObrazekDoDocasneSlozky(urlObrazku, novyNazevSouboru);
+                    }
 
                 }
                 else
                 {
-
+                    // TODO!
+                    return null;
                 }
-
-                IStorageItem ulozenyAktualniObrazek = await DocasnaSlozka.TryGetItemAsync(nazevSouboruObrazkuChatu + "." + koncovkaSouboruObrazkuChatu);
-
-
-                return null;
             }
             catch
             {

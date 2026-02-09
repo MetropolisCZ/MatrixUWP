@@ -173,6 +173,7 @@ namespace MatrixUWP
             {
                 kliknutySouborDataKontext.ObrazekZpravy = praveStazenyObrazek;
                 kliknutySouborDataKontext.NazevObrazkuZpravy = nazevAktualnihoObrazku;
+                ListViewZpravyChaty.Focus(FocusState.Programmatic);
             }
 
             

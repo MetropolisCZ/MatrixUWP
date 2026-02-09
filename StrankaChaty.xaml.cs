@@ -187,6 +187,17 @@ namespace MatrixUWP
 
                     //StackPanelNacitani_Stav.Text = "Načítání obrázků konverzací";
 
+                    BitmapImage ObrazekChatu = new BitmapImage();
+                    if (urlObrazkuChatu == null)
+                    {
+                        ObrazekChatu = null;
+                    }
+                    else
+                    {
+                        ObrazekChatu = await ObrazekNacistzCacheNeboStahnout(urlObrazkuChatu);
+                    }
+
+
                     MatrixSeznamChatu.Add(new MatrixSeznamChatu_JedenChat
                     {
                         IdChatu = jedenChatMatrix.Key,
@@ -194,7 +205,7 @@ namespace MatrixUWP
                         PosledniZprava = posledniZpravaText,
                         UnixoveSekundyPosledniZpravy = unixoveSekundyPosledniZpravy,
                         ZobrazovanyCasPosledniZpravy = zobrazovanyCasPosledniZpravy,
-                        ObrazekChatu = await ObrazekNacistzCacheNeboStahnout(urlObrazkuChatu),
+                        ObrazekChatu = ObrazekChatu,
                         //Timeline = jedenChatMatrix.Value.Timeline,
                         ClenoveChatu = clenoveChatu // Bez aktuálního uživatele
                                                     //new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(jedenChatMatrix.Value.Timeline?.Events?.LastOrDefault()?.OriginServerTs ?? 0.0)
