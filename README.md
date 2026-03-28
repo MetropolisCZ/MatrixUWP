@@ -1,0 +1,1 @@
+Klient pro Matrix. Založeno na oficiálních API. Všechna práva na zdrojový kód vyhrazena. Nevytvářejte prosím vlastní aplikace bez konzultace s vývojářem této. All rights on source code reserved. Please do not create own forks without consulting with dev of this app.
