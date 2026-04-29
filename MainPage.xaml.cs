@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using static MatrixUWP.MatrixDatabazeObjekty;
 
 // Dokumentaci k šabloně položky Prázdná stránka najdete na adrese https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x405
 
@@ -30,6 +31,19 @@ namespace MatrixUWP
         public MainPage()
         {
             InitializeComponent();
+
+            //var testUdalost = new MatrixDatabaze_Udalost
+            //{
+            //    IdUdalosti = Guid.NewGuid().ToString(),
+            //    IdMistnosti = "!testroom:server.cz",
+            //    Odesilatel = "@tomas:server.cz",
+            //    CasoveRazitko = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            //    Druh = "m.room.message",
+            //    ObsahJSON = "{\"msgtype\":\"m.text\",\"body\":\"Testovací zpráva\"}",
+            //    IndexVMistnosti = 1
+            //};
+
+            //MatrixDatabaze.Instance.VlozitUdalostDoDatabaze(testUdalost);
 
             ContentFrame = NavigacniRamec;
             PageHeader = NadpisStrankyTextBlock;

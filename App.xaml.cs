@@ -39,6 +39,11 @@ namespace MatrixUWP
         /// <param name="e">Podrobnosti o žádosti o spuštění a procesu</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            // Inicializace databáze pro ukládání zpráv
+            MatrixDatabaze.Instance.Inicializovat();
+            // Načtení sync tokenu
+            // Spuštění synchronizační smyčky
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Neopakovat inicializaci aplikace, pokud už má okno obsah,
