@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -79,9 +80,9 @@ namespace MatrixUWP
             {
                 if (jednaZprava.Type == "m.room.message")
                 {
-                    string druhZpravy = ZiskatHodnotuDictionary(jednaZprava.Content, "msgtype") ?? "m.text";
+                    string druhZpravy = jednaZprava.ContentJson.GetValue("msgtype").ToString() ?? "m.text";
 
-                    if (jednaZprava.Sender == "@" + StrankaChaty.uzivatelskeJmeno + ":4d2.org")
+                    if (jednaZprava.Sender == "@" + MatrixSluzbaSynchronizace.Instance.uzivatelskeJmeno + ":4d2.org")
                     { // Zpráva od uživatele
                         switch (druhZpravy)
                         {
@@ -130,7 +131,7 @@ namespace MatrixUWP
                 }
                 else if (jednaZprava.Type == "m.room.redaction")
                 {
-                    return jednaZprava.Sender == "@" + StrankaChaty.uzivatelskeJmeno + ":4d2.org"
+                    return jednaZprava.Sender == "@" + MatrixSluzbaSynchronizace.Instance.uzivatelskeJmeno + ":4d2.org"
                         ? SablonaZprava_OdUzivatele_Smazano
                         : SablonaZprava_OdNekohoJineho_Smazano;
                 }
@@ -188,6 +189,49 @@ namespace MatrixUWP
             {
                 return matrixIdUzivatele;
             }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    public class KonvertorSeznamChatuCasPosledniZpravy : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            long unixoveSekundyPosledniZpravy = (long)value;
+            DateTime dateTimePosledniZpravy = DateTimeOffset.FromUnixTimeMilliseconds(unixoveSekundyPosledniZpravy).LocalDateTime;
+
+            if (dateTimePosledniZpravy.Day == DateTime.Now.Day && dateTimePosledniZpravy.Month == DateTime.Now.Month && dateTimePosledniZpravy.Year == DateTime.Now.Year) // Je to dneska, dát jenom čas
+            {
+                return dateTimePosledniZpravy.ToString("H:mm");
+            }
+            else if (dateTimePosledniZpravy.Day == DateTime.Now.AddDays(-1).Day && dateTimePosledniZpravy.Month == DateTime.Now.AddDays(-1).Month && dateTimePosledniZpravy.Year == DateTime.Now.AddDays(-1).Year)
+            {
+                return "včera v " + dateTimePosledniZpravy.ToString("H:mm");
+            }
+            else
+            {
+                return dateTimePosledniZpravy.ToString("d. M. yyyy");
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    public class KonvertorSeznamChatuTextPosledniZpravyzJson : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            JObject posledniZpravaJson = (JObject)value;
+            return posledniZpravaJson?.GetValue("body")?.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

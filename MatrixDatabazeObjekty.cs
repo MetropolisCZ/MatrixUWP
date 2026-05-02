@@ -26,6 +26,7 @@ namespace MatrixUWP
             public string Nazev { get; set; }
             public string UrlObrazku { get; set; }
             public long CasovaZnamkaPosledniUdalosti { get; set; }
+            public string TextPosledniZpravyNahled { get; set; }
             public int PocetNeprectenych { get; set; }
         }
 

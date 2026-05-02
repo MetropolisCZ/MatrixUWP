@@ -106,12 +106,12 @@ namespace MatrixUWP
                 ApplicationData.Current.LocalSettings.Values["pristupovyToken"] = pristupovyToken;
                 ApplicationData.Current.LocalSettings.Values["MatrixServer"] = contentDialogPrihlaseni_textBox_server.Text;
                 ApplicationData.Current.LocalSettings.Values["uzivatelskeJmeno"] = contentDialogPrihlaseni_textBox_uzivatelskeJmeno.Text.ToLower();
+
+
+
+                MatrixSluzbaSynchronizace.Instance.NacistDataChatu();
+
                 MainPage.NavigovatNaStranku(typeof(StrankaChaty));
-
-
-                //MainPage.NavigovatNaStranku(typeof(StrankaSoubory));
-
-                //JObject repository_url = JObject.Parse(await NacistStrankuRestApi("https://graph.microsoft.com/v1.0/me"));
             }
         }
 
@@ -126,6 +126,27 @@ namespace MatrixUWP
             }
         }
 
+        private void StahnoutNovySynchronizacniSoubor_Click(object sender, RoutedEventArgs e)
+        {
+            if (MatrixSluzbaSynchronizace.Instance.matrixServer != null)
+            { // Jestli ještě neproběhlo přihlášení, tak to zablokovat a nedělat nic
 
+                MatrixSluzbaSynchronizace.Instance.synchonizacniSmyckaSpustena = false;
+                ApplicationData.Current.LocalSettings.Values.Remove("tokenProOfsetSynchronizace");
+
+                MatrixSluzbaSynchronizace.Instance.NacistDataChatu();
+
+                MainPage.NavigovatNaStranku(typeof(StrankaChaty));
+            }
+            else
+            {
+                _ = new ContentDialog()
+                {
+                    Title = "Vyžadováno přihlášení",
+                    Content = "Nejprve se prosíme přihlaste k vašemu účtu Matrix",
+                    CloseButtonText = "Zavřit"
+                }.ShowAsync();
+            }
+        }
     }
 }

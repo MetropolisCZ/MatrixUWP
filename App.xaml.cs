@@ -41,8 +41,8 @@ namespace MatrixUWP
         {
             // Inicializace databáze pro ukládání zpráv
             MatrixDatabaze.Instance.Inicializovat();
-            // Načtení sync tokenu
-            // Spuštění synchronizační smyčky
+            // Načtení zpráv (buď první načtení, nebo načtení z databáze) a spuštění synchronizační smyčky
+            MatrixSluzbaSynchronizace.Instance.NacistDataChatu();
 
             Frame rootFrame = Window.Current.Content as Frame;
 

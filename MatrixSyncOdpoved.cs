@@ -36,6 +36,9 @@ namespace MatrixUWP
         [JsonProperty("state")]
         public State State { get; set; }
 
+        [JsonProperty("unread_notifications")]
+        public Unread_notifications Unread_notifications { get; set; }
+
         // Add other properties like ephemeral, account_data, etc. if needed
     }
 
@@ -78,6 +81,15 @@ namespace MatrixUWP
         public string PrevBatch { get; set; }
     }
 
+    public class Unread_notifications
+    {
+        [JsonProperty("highlight_count")]
+        public int Highlight_count { get; set; }
+
+        [JsonProperty("notification_count")]
+        public int Notification_count { get; set; }
+    }
+
     public class Event : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -94,7 +106,7 @@ namespace MatrixUWP
         public string Sender { get; set; }
 
         [JsonProperty("content")]
-        public Dictionary<string, object> Content { get; set; }
+        public JObject ContentJson { get; set; }
 
         [JsonProperty("event_id")]
         public string EventId { get; set; }

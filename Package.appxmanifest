@@ -9,7 +9,7 @@
   <Identity
     Name="FirmaMetropolis.MetropolisMatrixklient"
     Publisher="CN=Firma Metropolis"
-    Version="0.3.3.0" />
+    Version="0.4.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="6856c223-e27d-452e-8cb7-0fdf1aeb290d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,7 +43,7 @@ namespace MatrixUWP
                 NazevKonverzace.Text = chatKterySeMaZobrazit.NazevChatu;
 
                 StackPanelNacitani_Stav.Text = "Stahování synchronizačního souboru ze serveru";
-                string UrlNacistZpravyChatu = "https://" + StrankaChaty.matrixServer + "/_matrix/client/v3/rooms/" + chatKterySeMaZobrazit.IdChatu + "/messages?dir=b&limit=50";
+                string UrlNacistZpravyChatu = "https://" + MatrixSluzbaSynchronizace.Instance.matrixServer + "/_matrix/client/v3/rooms/" + chatKterySeMaZobrazit.IdChatu + "/messages?dir=b&limit=50";
                 var aaa = await NacistStrankuRestApi(UrlNacistZpravyChatu);
 
                 StackPanelNacitani_Stav.Text = "Zpracovávání celkového synchronizačního souboru";
@@ -53,7 +54,7 @@ namespace MatrixUWP
 
                 foreach (Event JednaZpravaAktualniKonverzace in zpravyAktualniKonverzace.Zpravy)
                 {
-                    if (JednaZpravaAktualniKonverzace.Type == "m.room.message" && ZiskatHodnotuDictionary(JednaZpravaAktualniKonverzace.Content, "msgtype") == "m.image")
+                    if (JednaZpravaAktualniKonverzace.Type == "m.room.message" && JednaZpravaAktualniKonverzace.ContentJson.GetValue("msgtype").ToString() == "m.image")
                     {
                         /*StorageFile StazenyObrazek = await DocasnaSlozka.CreateFileAsync(JednaZpravaAktualniKonverzace.EventId + "." + ZiskatHodnotuDictionary(ZiskatHodnotuDictionaryVratitDictionary(JednaZpravaAktualniKonverzace.Content, "info"), "mimetype").Split('/')[1], CreationCollisionOption.GenerateUniqueName);
 
@@ -61,7 +62,9 @@ namespace MatrixUWP
 
                         await Windows.System.Launcher.LaunchFileAsync(StazenyObrazek);*/
 
-                        string nazevAktualnihoObrazku = JednaZpravaAktualniKonverzace.EventId + "." + ZiskatHodnotuDictionary(ZiskatHodnotuDictionaryVratitDictionary(JednaZpravaAktualniKonverzace.Content, "info"), "mimetype").Split('/')[1];
+                        
+                        
+                        string nazevAktualnihoObrazku = JednaZpravaAktualniKonverzace.EventId + "." + JednaZpravaAktualniKonverzace.ContentJson.SelectToken("info.mimetype").ToString().Split('/')[1];
 
                         IStorageItem ulozenyAktualniObrazek = await DocasnaSlozka.TryGetItemAsync(nazevAktualnihoObrazku);
 
@@ -164,10 +167,10 @@ namespace MatrixUWP
             Button kliknutySoubor = (Button)sender;
             Event kliknutySouborDataKontext = (Event)kliknutySoubor.DataContext;
 
-            string nazevAktualnihoObrazku = kliknutySouborDataKontext.EventId + "." + ZiskatHodnotuDictionary(ZiskatHodnotuDictionaryVratitDictionary(kliknutySouborDataKontext.Content, "info"), "mimetype").Split('/')[1];
+            string nazevAktualnihoObrazku = kliknutySouborDataKontext.EventId + "." + kliknutySouborDataKontext.ContentJson.SelectToken("info.mimetype").ToString().Split('/')[1];
 
 
-            BitmapImage praveStazenyObrazek = await NacistMatrixObrazekDoDocasneSlozky(ZiskatHodnotuDictionary(kliknutySouborDataKontext.Content, "url"), nazevAktualnihoObrazku);
+            BitmapImage praveStazenyObrazek = await NacistMatrixObrazekDoDocasneSlozky(kliknutySouborDataKontext.ContentJson.GetValue("url").ToString(), nazevAktualnihoObrazku);
 
             if (praveStazenyObrazek != null)
             {

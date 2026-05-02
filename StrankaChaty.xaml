@@ -6,13 +6,19 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" NavigationCacheMode="Enabled">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    NavigationCacheMode="Enabled">
+
+    <Page.Resources>
+        <local:KonvertorSeznamChatuCasPosledniZpravy x:Key="KonvertorSeznamChatuCasPosledniZpravy"/>
+        <local:KonvertorSeznamChatuTextPosledniZpravyzJson x:Key="KonvertorSeznamChatuTextPosledniZpravyzJson"></local:KonvertorSeznamChatuTextPosledniZpravyzJson>
+    </Page.Resources>
 
     <ScrollViewer>
         <StackPanel VerticalAlignment="Center">
-            <StackPanel x:Name="StackPanelNacitani" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <ProgressRing IsActive="True"></ProgressRing>
-                <TextBlock x:Name="StackPanelNacitani_Stav"></TextBlock>
+            <StackPanel x:Name="StackPanelNacitani" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="30">
+                <ProgressRing IsActive="True" x:Name="StackPanelNacitani_Kolecko" Visibility="Visible"></ProgressRing>
+                <TextBlock x:Name="StackPanelNacitani_Stav" TextWrapping="Wrap" Text="Načítání"></TextBlock>
             </StackPanel>
             
             <ListView x:Name="ListViewChaty" HorizontalAlignment="Stretch" SelectionMode="None" IsItemClickEnabled="True" IsSwipeEnabled="False" ItemClick="ListViewChaty_ItemClick" Visibility="Collapsed">
@@ -28,11 +34,11 @@
                                 <ColumnDefinition Width="60"></ColumnDefinition>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Margin="0,8,15,8" CornerRadius="8">
+                            <!--<Border Grid.Column="0" Margin="0,8,15,8" CornerRadius="8">
                                 <Border.Background>
-                                    <ImageBrush Stretch="Uniform"  ImageSource="{Binding ObrazekChatu}" ></ImageBrush>
+                                    <ImageBrush Stretch="Uniform" ImageSource="{Binding ObrazekChatu}" ></ImageBrush>
                                 </Border.Background>
-                            </Border>
+                            </Border>-->
                             <!--<Image Grid.Column="0" Source="{Binding ObrazekChatu}" Margin="0,8,15,8"></Image>--> <!-- Bez zaoblení -->
                             <Grid Padding="0,10" Grid.Column="1">
                                 <Grid.ColumnDefinitions>
@@ -43,10 +49,10 @@
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
-                                <TextBlock Text="{Binding NazevChatu}" FontWeight="SemiBold" Grid.Column="0" />
-                                <TextBlock Text="{Binding ZobrazovanyCasPosledniZpravy}" Foreground="Gray" FontWeight="Light" Grid.Column="1" />
-                                
-                                <TextBlock Text="{Binding PosledniZprava}" TextTrimming="CharacterEllipsis" Margin="0,5,0,2" Foreground="Gray" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+                                <TextBlock Text="{Binding Nazev}" FontWeight="SemiBold" Grid.Column="0" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding CasovaZnamkaPosledniUdalosti, Converter={StaticResource KonvertorSeznamChatuCasPosledniZpravy}}" Foreground="Gray" FontWeight="Light" Grid.Column="1" />
+
+                                <TextBlock Text="{Binding TextPosledniZpravyNahled}" TextTrimming="CharacterEllipsis" Margin="0,5,0,2" Foreground="Gray" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
                             </Grid>
                         </Grid>
                     </DataTemplate>

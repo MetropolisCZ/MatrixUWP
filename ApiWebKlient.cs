@@ -84,6 +84,15 @@ namespace MatrixUWP
                 if (httpResponse.StatusCode == HttpStatusCode.Unauthorized && prvniPokus)
                 {
 
+                    ContentDialog dialogHTTPchyba = new ContentDialog()
+                    {
+                        Title = "HTTP odpověď " + httpResponse.StatusCode,
+                        Content = await httpResponse.Content.ReadAsStringAsync() + "\n\n" + UrlkZiskani,
+                        CloseButtonText = "Zavřit"
+                    };
+
+                    Debug.WriteLine("HTTP odpověď " + httpResponse.StatusCode);
+
                     bool zobrazitPrihlaseniAutomaticky = true;
                     NavigovatNaStranku(typeof(StrankaNastaveni), zobrazitPrihlaseniAutomaticky);
 
@@ -97,6 +106,8 @@ namespace MatrixUWP
                         Content = await httpResponse.Content.ReadAsStringAsync() + "\n\n" + UrlkZiskani,
                         CloseButtonText = "Zavřit"
                     };
+
+                    Debug.WriteLine("HTTP odpověď " + httpResponse.StatusCode);
 
                     _ = await dialogHTTPchyba.ShowAsync();
                     if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
@@ -125,7 +136,7 @@ namespace MatrixUWP
 
             BitmapImage matrixObrazek = new BitmapImage();
 
-            IBuffer BufferObrazku = await NacistBufferRestApi("https://" + StrankaChaty.matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6));
+            IBuffer BufferObrazku = await NacistBufferRestApi("https://" + MatrixSluzbaSynchronizace.Instance.matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6));
 
             var memoryStream = new InMemoryRandomAccessStream();
             await memoryStream.WriteAsync(BufferObrazku);
@@ -180,7 +191,7 @@ namespace MatrixUWP
             Debug.WriteLine("Stahování obrázku ze serveru");
 
 
-            BufferObrazku = await NacistBufferRestApi("https://" + StrankaChaty.matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6));
+            BufferObrazku = await NacistBufferRestApi("https://" + MatrixSluzbaSynchronizace.Instance.matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6));
 
 
             var memoryStream = new InMemoryRandomAccessStream();
@@ -242,7 +253,7 @@ namespace MatrixUWP
                 { // Není uložen název, stáhnout název
 
                     HttpResponseMessage httpResponse = new HttpResponseMessage();
-                    httpResponse = await httpClient.GetAsync(new Uri("https://" + StrankaChaty.matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6)));
+                    httpResponse = await httpClient.GetAsync(new Uri("https://" + MatrixSluzbaSynchronizace.Instance.matrixServer + "/_matrix/client/v1/media/download/" + urlObrazku.Remove(0, 6)));
                     string koncovkaObrazku = httpResponse.Content.Headers.ContentType.ToString().Split('/')[1];
 
                     string novyNazevSouboru = urlObrazku.Split('/').Last() + "." + koncovkaObrazku;

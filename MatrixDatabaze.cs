@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Windows.Storage;
 using static MatrixUWP.MatrixDatabazeObjekty;
@@ -33,7 +35,7 @@ namespace MatrixUWP
         // ---------------------------------------------------------
         // Inicializace databáze (volat v App.xaml.cs → OnLaunched)
         // ---------------------------------------------------------
-        public void Inicializovat()
+        public async void Inicializovat()
         {
             using (var spojeni = new SqliteConnection("Data Source=" + _cesta))
             {
@@ -58,6 +60,7 @@ namespace MatrixUWP
                         Nazev TEXT,
                         UrlObrazku TEXT,
                         CasovaZnamkaPosledniUdalosti INTEGER,
+                        TextPosledniZpravyNahled TEXT,
                         PocetNeprectenych INTEGER
                     );
 
@@ -70,9 +73,11 @@ namespace MatrixUWP
                     );
                     ";
 
-                    prikaz.ExecuteNonQuery();
+                    await prikaz.ExecuteNonQueryAsync();
                 }
             }
+
+
         }
 
         // ---------------------------------------------------------
@@ -120,8 +125,8 @@ namespace MatrixUWP
                     prikaz.CommandText =
                     @"
                     INSERT OR REPLACE INTO Mistnosti
-                    (IdMistnosti, Nazev, UrlObrazku, CasovaZnamkaPosledniUdalosti, PocetNeprectenych)
-                    VALUES ($id, $nazev, $url, $cas, $neprectene);
+                    (IdMistnosti, Nazev, UrlObrazku, CasovaZnamkaPosledniUdalosti, PocetNeprectenych, TextPosledniZpravyNahled)
+                    VALUES ($id, $nazev, $url, $cas, $neprectene, $textPosledniZpravyNahled);
                     ";
 
                     prikaz.Parameters.AddWithValue("$id", m.IdMistnosti);
@@ -129,6 +134,7 @@ namespace MatrixUWP
                     prikaz.Parameters.AddWithValue("$url", m.UrlObrazku);
                     prikaz.Parameters.AddWithValue("$cas", m.CasovaZnamkaPosledniUdalosti);
                     prikaz.Parameters.AddWithValue("$neprectene", m.PocetNeprectenych);
+                    prikaz.Parameters.AddWithValue("$textPosledniZpravyNahled", m.TextPosledniZpravyNahled);
 
                     prikaz.ExecuteNonQuery();
                 }
@@ -159,6 +165,74 @@ namespace MatrixUWP
                     prikaz.Parameters.AddWithValue("$obsah", s.ObsahJSON);
 
                     prikaz.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+        // ---------------------------------------------------------
+        // Vybrat všechny místnosti z databáze
+        // ---------------------------------------------------------
+        public async Task<ObservableCollection<MatrixDatabaze_Mistnost>> VybratVsechnyMistnostizDatabaze()
+        {
+            using (var spojeni = new SqliteConnection("Data Source=" + _cesta))
+            {
+                spojeni.Open();
+
+                using (var prikaz = spojeni.CreateCommand())
+                {
+                    prikaz.CommandText =
+                    @"
+                    SELECT IdMistnosti, Nazev, UrlObrazku, CasovaZnamkaPosledniUdalosti, PocetNeprectenych, TextPosledniZpravyNahled
+                    FROM Mistnosti
+                    ORDER BY CasovaZnamkaPosledniUdalosti DESC
+                    LIMIT 20
+                    ";
+
+                    SqliteDataReader vysledekSqlQuery = await prikaz.ExecuteReaderAsync();
+
+                    ObservableCollection<MatrixDatabaze_Mistnost> vsechnyMistnostizDatabaze = new ObservableCollection<MatrixDatabaze_Mistnost>();
+
+                    while (await vysledekSqlQuery.ReadAsync())
+                    {
+                        vsechnyMistnostizDatabaze.Add(new MatrixDatabaze_Mistnost {
+                            IdMistnosti = vysledekSqlQuery.GetString(0),
+                            Nazev = vysledekSqlQuery.GetString(1),
+                            UrlObrazku = vysledekSqlQuery.GetString(2),
+                            CasovaZnamkaPosledniUdalosti = vysledekSqlQuery.GetInt64(3),
+                            PocetNeprectenych = vysledekSqlQuery.GetInt32(4),
+                            TextPosledniZpravyNahled = vysledekSqlQuery.GetString(5)
+                        });
+                    }
+
+                    return vsechnyMistnostizDatabaze;
+                }
+            }
+        }
+
+
+        // ---------------------------------------------------------
+        // Odstranit obsah všech tabulek
+        // ---------------------------------------------------------
+        public async void OdstranitObsahVsechTabulek()
+        {
+            using (var spojeni = new SqliteConnection("Data Source=" + _cesta))
+            {
+                spojeni.Open();
+
+                using (var prikaz = spojeni.CreateCommand())
+                {
+                    prikaz.CommandText =
+                    @"
+                    DELETE FROM Udalosti;
+                    DELETE FROM Mistnosti;
+                    DELETE FROM Stavy;
+                    DELETE FROM SQLITE_SEQUENCE WHERE name IN ('Udalosti', 'Mistnosti', 'Stavy');
+                    ";
+
+                    // SQlite neumí TRUNCATE
+
+                    await prikaz.ExecuteNonQueryAsync();
                 }
             }
         }
