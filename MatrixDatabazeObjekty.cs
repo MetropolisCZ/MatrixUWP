@@ -25,6 +25,7 @@ namespace MatrixUWP
             public string IdMistnosti { get; set; }
             public string Nazev { get; set; }
             public string UrlObrazku { get; set; }
+            public string NazevCacheovanehoObrazku { get; set; }
             public long CasovaZnamkaPosledniUdalosti { get; set; }
             public string TextPosledniZpravyNahled { get; set; }
             public int PocetNeprectenych { get; set; }

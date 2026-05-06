@@ -45,7 +45,10 @@ namespace MatrixUWP
         private MatrixSluzbaSynchronizace()
         {
             var headers = httpClient.DefaultRequestHeaders;
-            headers.Authorization = new Windows.Web.Http.Headers.HttpCredentialsHeaderValue("Bearer", pristupovyToken);
+            if (pristupovyToken != null)
+            {
+                headers.Authorization = new Windows.Web.Http.Headers.HttpCredentialsHeaderValue("Bearer", pristupovyToken);
+            }
         }
 
 
@@ -53,6 +56,7 @@ namespace MatrixUWP
         {
             try
             {
+                Debug.WriteLine("Stahování celého symchronizačního souboru");
                 // Úložiště DB – C:\Users\tomas\AppData\Local\Packages\FirmaMetropolis.MetropolisMatrixklient_fm85nwa52bhpm\LocalState
 
                 string UrlSyncFiltrovana = "https://" + matrixServer + "/_matrix/client/r0/sync"; // ?filter={\"room\":{\"timeline\":{\"limit\":2},\"state\":{\"lazy_load_members\":true}}}
@@ -186,6 +190,12 @@ namespace MatrixUWP
                         }
                     }
 
+                    // -------------------------------------------------
+                    // Obrázek místnosti
+                    // -------------------------------------------------
+
+
+
                     MatrixDatabaze.Instance.VlozitMistnostDoDatabaze(new MatrixDatabaze_Mistnost
                     {
                         IdMistnosti = jedenChatMatrix.Key,
@@ -195,6 +205,7 @@ namespace MatrixUWP
                         CasovaZnamkaPosledniUdalosti = posledniCasoveRazitkoMistnosti,
                         TextPosledniZpravyNahled = textPosledniZpravyNahled
                     });
+
 
 
                 }
@@ -220,7 +231,94 @@ namespace MatrixUWP
 
         public async Task AktualizovatZpravyDleOffsetovehoTokenu()
         {
-            string tokenProOfsetSynchronizace = ApplicationData.Current.LocalSettings.Values["tokenProOfsetSynchronizace"]?.ToString();
+
+            string UrlSyncFiltrovana = "https://" + matrixServer + "/_matrix/client/r0/sync?since=" + tokenProOfsetSynchronizace; // ?filter={\"room\":{\"timeline\":{\"limit\":2},\"state\":{\"lazy_load_members\":true}}}
+            var aaa = await NacistStrankuRestApi(UrlSyncFiltrovana);
+            MatrixSyncOdpoved matrixSyncOdpoved = JsonConvert.DeserializeObject<MatrixSyncOdpoved>(aaa);
+            bool provestNovyVyber = false;
+
+            if (matrixSyncOdpoved?.Rooms?.Join?.Count != null)
+            {
+                foreach (var jednaAktualizovanaMistnost in matrixSyncOdpoved.Rooms.Join)
+                {
+                    if (jednaAktualizovanaMistnost.Value.Timeline.Events.Count != 0)
+                    {
+                        foreach (Event jedenChatMatrix_udalost in jednaAktualizovanaMistnost.Value.Timeline.Events)
+                        {
+                            MatrixDatabaze.Instance.VlozitUdalostDoDatabaze(new MatrixDatabaze_Udalost
+                            {
+                                CasoveRazitko = jedenChatMatrix_udalost.OriginServerTs,
+                                Druh = jedenChatMatrix_udalost.Type,
+                                IdMistnosti = jednaAktualizovanaMistnost.Key,
+                                IdUdalosti = jedenChatMatrix_udalost.EventId,
+                                Odesilatel = jedenChatMatrix_udalost.Sender,
+                                ObsahJSON = jedenChatMatrix_udalost.ContentJson.ToString()
+                            });
+
+                            if (jedenChatMatrix_udalost.Type == "m.room.message" && jedenChatMatrix_udalost.ContentJson?.GetValue("msgtype")?.ToString() == "m.text")
+                            {
+                                // TODO TAKY AKTIVNÍ KONVERZACE
+
+
+                                MatrixDatabaze_Mistnost hledaniAktivniSeznamChatu = SeznamChatu.FirstOrDefault(e => e.IdMistnosti == jednaAktualizovanaMistnost.Key);
+
+
+                                MatrixDatabaze.Instance.VlozitMistnostDoDatabaze(new MatrixDatabaze_Mistnost
+                                {
+                                    IdMistnosti = jednaAktualizovanaMistnost.Key,
+                                    CasovaZnamkaPosledniUdalosti = jedenChatMatrix_udalost.OriginServerTs,
+                                    TextPosledniZpravyNahled = jedenChatMatrix_udalost.ContentJson.GetValue("body").ToString()
+                                });
+
+
+                                MatrixDatabaze.Instance.VlozitUdalostDoDatabaze(new MatrixDatabaze_Udalost
+                                {
+                                    CasoveRazitko = jedenChatMatrix_udalost.OriginServerTs,
+                                    Druh = jedenChatMatrix_udalost.Type,
+                                    IdMistnosti = jednaAktualizovanaMistnost.Key,
+                                    IdUdalosti = jedenChatMatrix_udalost.EventId,
+                                    Odesilatel = jedenChatMatrix_udalost.Sender,
+                                    ObsahJSON = jedenChatMatrix_udalost.ContentJson.ToString()
+                                });
+
+
+
+                                if (hledaniAktivniSeznamChatu != null)
+                                {
+                                    hledaniAktivniSeznamChatu.TextPosledniZpravyNahled = jedenChatMatrix_udalost.ContentJson.GetValue("body").ToString();
+                                    SeznamChatu.Move(SeznamChatu.IndexOf(hledaniAktivniSeznamChatu), 0);
+                                }
+                                else
+                                {
+                                    // Není v načteném seznamu – na konci smyčky provedu nový výběr
+                                    provestNovyVyber = true;
+                                }
+                            }
+                        }
+                        
+                    }
+                    if (jednaAktualizovanaMistnost.Value.State.Events.Count != 0)
+                    {
+
+                    }
+                    if (jednaAktualizovanaMistnost.Value.Unread_notifications.Notification_count != 0)
+                    {
+
+                    }
+                }
+            }
+
+            // Provést nový výběr z DB, pokud změna nebyla v aktivně zobrazených položkách
+            if (provestNovyVyber == true)
+            {
+                Debug.WriteLine("Zprávy mimo aktivní zobrazení byly změněny – provede se nový výběr");
+                SeznamChatu = await MatrixDatabaze.Instance.VybratVsechnyMistnostizDatabaze();
+            }
+
+
+            // Teď uložíme token pro offset synchronizace (next_batch)
+            ApplicationData.Current.LocalSettings.Values["tokenProOfsetSynchronizace"] = matrixSyncOdpoved.NextBatch;
+            tokenProOfsetSynchronizace = matrixSyncOdpoved.NextBatch;
 
         }
 
@@ -233,11 +331,14 @@ namespace MatrixUWP
             }
             else
             { // Provedeme do-synchronizování za pomoci tokenu
-              
+                Debug.WriteLine("Stahování částečného symchronizačního souboru");
+
+                await Instance.AktualizovatZpravyDleOffsetovehoTokenu();
+
                 //StackPanelNacitani_Stav.Text = "Stahování nových zpráv";
                 //await Instance.AktualizovatZpravyDleOffsetovehoTokenu();
 
-                SeznamChatu = await MatrixDatabaze.Instance.VybratVsechnyMistnostizDatabaze();
+                //SeznamChatu = await MatrixDatabaze.Instance.VybratVsechnyMistnostizDatabaze();
 
 #pragma warning disable CS4014 // Protože se toto volání neočekává, vykonávání aktuální metody pokračuje před dokončením volání.
                 SpustitSynchronizacniSmycku();
@@ -247,7 +348,6 @@ namespace MatrixUWP
 
 
         }
-
 
 
         public async Task SpustitSynchronizacniSmycku()
@@ -263,84 +363,24 @@ namespace MatrixUWP
             {
                 try
                 {
-                    string UrlSyncFiltrovana = "https://" + matrixServer + "/_matrix/client/r0/sync?since=" + tokenProOfsetSynchronizace; // ?filter={\"room\":{\"timeline\":{\"limit\":2},\"state\":{\"lazy_load_members\":true}}}
-                    var aaa = await NacistStrankuRestApi(UrlSyncFiltrovana);
-                    MatrixSyncOdpoved matrixSyncOdpoved = JsonConvert.DeserializeObject<MatrixSyncOdpoved>(aaa);
-
-                    if (matrixSyncOdpoved?.Rooms?.Join?.Count != null)
-                    {
-                        foreach (var jednaAktualizovanaMistnost in matrixSyncOdpoved.Rooms.Join)
-                        {
-                            if (jednaAktualizovanaMistnost.Value.Timeline.Events.Count != 0)
-                            {
-                                foreach (Event jedenChatMatrix_udalost in jednaAktualizovanaMistnost.Value.Timeline.Events)
-                                {
-                                    MatrixDatabaze.Instance.VlozitUdalostDoDatabaze(new MatrixDatabaze_Udalost
-                                    {
-                                        CasoveRazitko = jedenChatMatrix_udalost.OriginServerTs,
-                                        Druh = jedenChatMatrix_udalost.Type,
-                                        IdMistnosti = jednaAktualizovanaMistnost.Key,
-                                        IdUdalosti = jedenChatMatrix_udalost.EventId,
-                                        Odesilatel = jedenChatMatrix_udalost.Sender,
-                                        ObsahJSON = jedenChatMatrix_udalost.ContentJson.ToString()
-                                    });
-
-                                    if (jedenChatMatrix_udalost.Type == "m.room.message" && jedenChatMatrix_udalost.ContentJson?.GetValue("msgtype")?.ToString() == "m.text")
-                                    {
-                                        // TODO TAKY AKTIVNÍ KONVERZACE
-
-
-                                        MatrixDatabaze_Mistnost hledaniAktivniSeznamChatu = SeznamChatu.FirstOrDefault(e => e.IdMistnosti == jednaAktualizovanaMistnost.Key);
-
-                                        if (hledaniAktivniSeznamChatu != null)
-                                        {
-                                            hledaniAktivniSeznamChatu.TextPosledniZpravyNahled = jedenChatMatrix_udalost.ContentJson.GetValue("body").ToString();
-                                            // TODO DB
-                                            SeznamChatu.Move(SeznamChatu.IndexOf(hledaniAktivniSeznamChatu), 0);
-                                        }
-                                        else
-                                        {
-                                            // Není v načteném seznamu – po uložení do DB provedu nový výběr
-                                        }
-                                    };
-                                }
-                            }
-                            if (jednaAktualizovanaMistnost.Value.State.Events.Count != 0)
-                            {
-
-                            }
-                            if (jednaAktualizovanaMistnost.Value.Unread_notifications.Notification_count != 0)
-                            {
-
-                            }
-                        }
-                    }
+                    await Instance.AktualizovatZpravyDleOffsetovehoTokenu();
                     
 
-                    // Teď uložíme token pro offset synchronizace (next_batch)
-                    ApplicationData.Current.LocalSettings.Values["tokenProOfsetSynchronizace"] = matrixSyncOdpoved.NextBatch;
-                    tokenProOfsetSynchronizace = matrixSyncOdpoved.NextBatch;
-
-                    /*// 2) Zavolat /sync (full nebo incremental)
-                    var syncResponse = await ZavolatSyncEndpointAsync(since);
-
-                    // 3) Uložit next_batch pro příště
-                    UlozitNextBatch(syncResponse.NextBatch);
-
                     // 4) Zpracovat rooms.join
-                    ZpracovatZmenyMistnosti(syncResponse.Rooms.Join);
+                    //ZpracovatZmenyMistnosti(syncResponse.Rooms.Join);
 
                     // 5) Zpracovat timeline eventy
-                    ZpracovatUdalosti(syncResponse.Rooms.Join);
+                    //ZpracovatUdalosti(syncResponse.Rooms.Join);
 
                     // 6) Aktualizovat UI (ObservableCollection)
-                    AktualizovatCache();*/
+                    //AktualizovatCache();
 
                     await Task.Delay(5000);
                     Debug.WriteLine("Synchonizační smyčka!");
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine(ex);
                     // Log, ale nepřerušit loop
                 }
             }

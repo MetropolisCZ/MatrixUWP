@@ -58,7 +58,8 @@ namespace MatrixUWP
                     CREATE TABLE IF NOT EXISTS Mistnosti (
                         IdMistnosti TEXT PRIMARY KEY,
                         Nazev TEXT,
-                        UrlObrazku TEXT,
+                        UrlObrazku TEXT,,
+                        NazevCacheovanehoObrazku TEXT,
                         CasovaZnamkaPosledniUdalosti INTEGER,
                         TextPosledniZpravyNahled TEXT,
                         PocetNeprectenych INTEGER
@@ -125,13 +126,14 @@ namespace MatrixUWP
                     prikaz.CommandText =
                     @"
                     INSERT OR REPLACE INTO Mistnosti
-                    (IdMistnosti, Nazev, UrlObrazku, CasovaZnamkaPosledniUdalosti, PocetNeprectenych, TextPosledniZpravyNahled)
-                    VALUES ($id, $nazev, $url, $cas, $neprectene, $textPosledniZpravyNahled);
+                    (IdMistnosti, Nazev, UrlObrazku, NazevCacheovanehoObrazku, CasovaZnamkaPosledniUdalosti, PocetNeprectenych, TextPosledniZpravyNahled)
+                    VALUES ($id, $nazev, $url, $nazevCacheovanehoObrazku, $cas, $neprectene, $textPosledniZpravyNahled);
                     ";
 
                     prikaz.Parameters.AddWithValue("$id", m.IdMistnosti);
                     prikaz.Parameters.AddWithValue("$nazev", m.Nazev);
                     prikaz.Parameters.AddWithValue("$url", m.UrlObrazku);
+                    prikaz.Parameters.AddWithValue("$nazevCacheovanehoObrazku", m.NazevCacheovanehoObrazku);
                     prikaz.Parameters.AddWithValue("$cas", m.CasovaZnamkaPosledniUdalosti);
                     prikaz.Parameters.AddWithValue("$neprectene", m.PocetNeprectenych);
                     prikaz.Parameters.AddWithValue("$textPosledniZpravyNahled", m.TextPosledniZpravyNahled);

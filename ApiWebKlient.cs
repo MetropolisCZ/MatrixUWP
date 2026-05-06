@@ -243,13 +243,13 @@ namespace MatrixUWP
 
         }
 
-        public async static Task<BitmapImage> ObrazekNacistzCacheNeboStahnout(string urlObrazku, string nazevSouboruObrazkuChatu = null, string koncovkaSouboruObrazkuChatu = null)
+        public async static Task<BitmapImage> ObrazekNacistzCacheNeboStahnout(string urlObrazku, string nazevSouboruObrazkuChatu = null)
         {
             try
             {
                 // Při parsování strankachaty získat koncovku souboru a uložit ji
 
-                if (nazevSouboruObrazkuChatu == null || koncovkaSouboruObrazkuChatu == null)
+                if (nazevSouboruObrazkuChatu == null)
                 { // Není uložen název, stáhnout název
 
                     HttpResponseMessage httpResponse = new HttpResponseMessage();
@@ -290,7 +290,7 @@ namespace MatrixUWP
             }
             catch
             {
-                return await NacistMatrixObrazekDoDocasneSlozky(urlObrazku, nazevSouboruObrazkuChatu + "." + koncovkaSouboruObrazkuChatu);
+                return await NacistMatrixObrazekDoDocasneSlozky(urlObrazku, nazevSouboruObrazkuChatu);
             }
         }
 
