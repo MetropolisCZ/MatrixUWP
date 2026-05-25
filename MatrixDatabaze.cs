@@ -58,7 +58,7 @@ namespace MatrixUWP
                     CREATE TABLE IF NOT EXISTS Mistnosti (
                         IdMistnosti TEXT PRIMARY KEY,
                         Nazev TEXT,
-                        UrlObrazku TEXT,,
+                        UrlObrazku TEXT,
                         NazevCacheovanehoObrazku TEXT,
                         CasovaZnamkaPosledniUdalosti INTEGER,
                         TextPosledniZpravyNahled TEXT,

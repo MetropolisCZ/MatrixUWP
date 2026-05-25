@@ -108,7 +108,10 @@ namespace MatrixUWP
                 headers.Authorization = new Windows.Web.Http.Headers.HttpCredentialsHeaderValue("Bearer", pristupovyToken);
                 MatrixSluzbaSynchronizace.Instance.pristupovyToken = pristupovyToken;
 
+                MatrixSluzbaSynchronizace.Instance.matrixServer = contentDialogPrihlaseni_textBox_server.Text;
                 ApplicationData.Current.LocalSettings.Values["MatrixServer"] = contentDialogPrihlaseni_textBox_server.Text;
+
+                MatrixSluzbaSynchronizace.Instance.uzivatelskeJmeno = contentDialogPrihlaseni_textBox_uzivatelskeJmeno.Text.ToLower();
                 ApplicationData.Current.LocalSettings.Values["uzivatelskeJmeno"] = contentDialogPrihlaseni_textBox_uzivatelskeJmeno.Text.ToLower();
 
 

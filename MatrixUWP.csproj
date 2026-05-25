@@ -20,7 +20,7 @@
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-    <PackageCertificateThumbprint>037D2716EADC5AA8B884E5354546B97C1BE7807E</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>918E315061D5756F1B22A99F72F2AED6408D660C</PackageCertificateThumbprint>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
@@ -154,6 +154,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <None Include="MatrixUWP_TemporaryKey.pfx" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\BadgeLogo.scale-100.png" />
     <Content Include="Assets\BadgeLogo.scale-125.png" />

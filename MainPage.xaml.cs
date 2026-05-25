@@ -50,7 +50,7 @@ namespace MatrixUWP
 
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
 
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("pristupovyToken"))
+            if (ApplicationData.Current.LocalSettings.Values["pristupovyToken"] != null)
             {
                 NavigovatNaStranku(typeof(StrankaChaty));
             }

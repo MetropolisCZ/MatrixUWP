@@ -324,9 +324,15 @@ namespace MatrixUWP
 
         public async void NacistDataChatu()
         {
-            if (ApplicationData.Current.LocalSettings.Values["tokenProOfsetSynchronizace"] == null)
+            if (ApplicationData.Current.LocalSettings.Values["pristupovyToken"] == null)
+            {
+                // Není uložen přístupový token -> přihlásit
+                Debug.WriteLine("Není uložen přístupový token -> přihlásit");
+            }
+            else if (ApplicationData.Current.LocalSettings.Values["tokenProOfsetSynchronizace"] == null)
             { // Není uložen token pro offset synchronizace – nebyla provedena prvotní synchronizace
                 //StackPanelNacitani_Stav.Text = "Provádění první synchronizace – tato operace může trvat delší dobu";
+                Debug.WriteLine("Stahování celého symchronizačního souboru");
                 await Instance.StahnoutCelySynchronizacniSoubor();
             }
             else
