@@ -56,7 +56,6 @@ namespace MatrixUWP
         {
             try
             {
-                Debug.WriteLine("Stahování celého symchronizačního souboru");
                 // Úložiště DB – C:\Users\tomas\AppData\Local\Packages\FirmaMetropolis.MetropolisMatrixklient_fm85nwa52bhpm\LocalState
 
                 string UrlSyncFiltrovana = "https://" + matrixServer + "/_matrix/client/r0/sync"; // ?filter={\"room\":{\"timeline\":{\"limit\":2},\"state\":{\"lazy_load_members\":true}}}
@@ -322,7 +321,7 @@ namespace MatrixUWP
 
         }
 
-        public async void NacistDataChatu()
+        public async Task NacistDataChatu()
         {
             if (ApplicationData.Current.LocalSettings.Values["pristupovyToken"] == null)
             {
@@ -332,7 +331,7 @@ namespace MatrixUWP
             else if (ApplicationData.Current.LocalSettings.Values["tokenProOfsetSynchronizace"] == null)
             { // Není uložen token pro offset synchronizace – nebyla provedena prvotní synchronizace
                 //StackPanelNacitani_Stav.Text = "Provádění první synchronizace – tato operace může trvat delší dobu";
-                Debug.WriteLine("Stahování celého symchronizačního souboru");
+                Debug.WriteLine("MatrixSluzbaSynchronizace.NacistDataChatu(): Stahování celého symchronizačního souboru");
                 await Instance.StahnoutCelySynchronizacniSoubor();
             }
             else

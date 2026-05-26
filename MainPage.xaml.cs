@@ -100,7 +100,10 @@ namespace MatrixUWP
 
         private void TlacitkoChaty_Click(object sender, RoutedEventArgs e)
         {
-            NavigovatNaStranku(typeof(StrankaChaty));
+            if (ApplicationData.Current.LocalSettings.Values["pristupovyToken"] != null)
+            {
+                NavigovatNaStranku(typeof(StrankaChaty));
+            }
         }
     }
 }

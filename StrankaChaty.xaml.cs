@@ -73,12 +73,6 @@ namespace MatrixUWP
         {
             base.OnNavigatedTo(e);
 
-            if (ApplicationData.Current.LocalSettings.Values["pristupovyToken"] == null)
-            {
-                bool zobrazitPrihlaseniAutomaticky = true;
-                MainPage.NavigovatNaStranku(typeof(StrankaNastaveni), zobrazitPrihlaseniAutomaticky);
-            }
-
             MainPage.PageHeader.Text = "Všechny konverzace";
 
         }

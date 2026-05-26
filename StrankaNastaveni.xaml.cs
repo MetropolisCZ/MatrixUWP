@@ -133,7 +133,7 @@ namespace MatrixUWP
             }
         }
 
-        private void StahnoutNovySynchronizacniSoubor_Click(object sender, RoutedEventArgs e)
+        private async void StahnoutNovySynchronizacniSoubor_Click(object sender, RoutedEventArgs e)
         {
             if (MatrixSluzbaSynchronizace.Instance.matrixServer != null)
             { // Jestli ještě neproběhlo přihlášení, tak to zablokovat a nedělat nic
@@ -141,7 +141,7 @@ namespace MatrixUWP
                 MatrixSluzbaSynchronizace.Instance.synchonizacniSmyckaSpustena = false;
                 ApplicationData.Current.LocalSettings.Values.Remove("tokenProOfsetSynchronizace");
 
-                MatrixSluzbaSynchronizace.Instance.NacistDataChatu();
+                await MatrixSluzbaSynchronizace.Instance.NacistDataChatu();
 
                 MainPage.NavigovatNaStranku(typeof(StrankaChaty));
             }

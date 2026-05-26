@@ -59,7 +59,7 @@ namespace MatrixUWP
                         IdMistnosti TEXT PRIMARY KEY,
                         Nazev TEXT,
                         UrlObrazku TEXT,
-                        NazevCacheovanehoObrazku TEXT,
+                        NazevCacheovanehoObrazku TEXT NULL,
                         CasovaZnamkaPosledniUdalosti INTEGER,
                         TextPosledniZpravyNahled TEXT,
                         PocetNeprectenych INTEGER
@@ -127,16 +127,23 @@ namespace MatrixUWP
                     @"
                     INSERT OR REPLACE INTO Mistnosti
                     (IdMistnosti, Nazev, UrlObrazku, NazevCacheovanehoObrazku, CasovaZnamkaPosledniUdalosti, PocetNeprectenych, TextPosledniZpravyNahled)
-                    VALUES ($id, $nazev, $url, $nazevCacheovanehoObrazku, $cas, $neprectene, $textPosledniZpravyNahled);
+                    VALUES ($id, $nazev, $urlObrazku, $nazevCacheovanehoObrazku, $cas, $neprectene, $textPosledniZpravyNahled);
                     ";
 
                     prikaz.Parameters.AddWithValue("$id", m.IdMistnosti);
-                    prikaz.Parameters.AddWithValue("$nazev", m.Nazev);
-                    prikaz.Parameters.AddWithValue("$url", m.UrlObrazku);
-                    prikaz.Parameters.AddWithValue("$nazevCacheovanehoObrazku", m.NazevCacheovanehoObrazku);
-                    prikaz.Parameters.AddWithValue("$cas", m.CasovaZnamkaPosledniUdalosti);
-                    prikaz.Parameters.AddWithValue("$neprectene", m.PocetNeprectenych);
-                    prikaz.Parameters.AddWithValue("$textPosledniZpravyNahled", m.TextPosledniZpravyNahled);
+                    prikaz.Parameters.AddWithValue("$nazev", (object)m.Nazev ?? DBNull.Value);
+                    prikaz.Parameters.AddWithValue("$urlObrazku", (object)m.UrlObrazku ?? DBNull.Value);
+                    if (m.NazevCacheovanehoObrazku != null)
+                    {
+                        prikaz.Parameters.AddWithValue("$nazevCacheovanehoObrazku", m.NazevCacheovanehoObrazku);
+                    }
+                    else
+                    {
+                        prikaz.Parameters.AddWithValue("$nazevCacheovanehoObrazku", DBNull.Value);
+                    }
+                    prikaz.Parameters.AddWithValue("$cas", (object)m.CasovaZnamkaPosledniUdalosti ?? DBNull.Value);
+                    prikaz.Parameters.AddWithValue("$neprectene", (object)m.PocetNeprectenych ?? DBNull.Value);
+                    prikaz.Parameters.AddWithValue("$textPosledniZpravyNahled", (object)m.TextPosledniZpravyNahled ?? DBNull.Value);
 
                     prikaz.ExecuteNonQuery();
                 }
