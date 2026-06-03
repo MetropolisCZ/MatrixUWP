@@ -306,6 +306,10 @@ namespace MatrixUWP
                     }
                 }
             }
+            else
+            {
+                Debug.WriteLine("Zprávy jsou aktuální – nový výběr se neprovede");
+            }
 
             // Provést nový výběr z DB, pokud změna nebyla v aktivně zobrazených položkách
             if (provestNovyVyber == true)

@@ -205,12 +205,12 @@ namespace MatrixUWP
                     while (await vysledekSqlQuery.ReadAsync())
                     {
                         vsechnyMistnostizDatabaze.Add(new MatrixDatabaze_Mistnost {
-                            IdMistnosti = vysledekSqlQuery.GetString(0),
-                            Nazev = vysledekSqlQuery.GetString(1),
-                            UrlObrazku = vysledekSqlQuery.GetString(2),
-                            CasovaZnamkaPosledniUdalosti = vysledekSqlQuery.GetInt64(3),
-                            PocetNeprectenych = vysledekSqlQuery.GetInt32(4),
-                            TextPosledniZpravyNahled = vysledekSqlQuery.GetString(5)
+                            IdMistnosti = vysledekSqlQuery.GetFieldValue<string>(0),
+                            Nazev = vysledekSqlQuery.GetFieldValue<string>(1),
+                            UrlObrazku = vysledekSqlQuery.GetFieldValue<string>(2),
+                            CasovaZnamkaPosledniUdalosti = vysledekSqlQuery.GetFieldValue<long>(3),
+                            PocetNeprectenych = vysledekSqlQuery.GetFieldValue<int>(4),
+                            TextPosledniZpravyNahled = vysledekSqlQuery.GetFieldValue<string>(5)
                         });
                     }
 
